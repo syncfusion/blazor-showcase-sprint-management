@@ -1,0 +1,192 @@
+﻿<SfGantt @ref="Gantt" TreeColumnIndex="0" DataSource="@TaskCollection?.ToList()" RowHeight="60" ScrollToTaskbarOnClick="true" EnablePredecessorValidation="false" EnableAdaptiveUI="@AdaptiveUI" Toolbar="@(new List<Object>() { "Cancel", "Update" , "Delete", "Edit", "CollapseAll", "ExpandAll"})" ViewType="ViewType.ResourceView">
+    <GanttTaskFields Id="Id" Name="Subject" StartDate="StartTime" EndDate="EndTime"  Progress="Progress" 
+                    ParentId="ParentId" ResourceInfo="Resources" Dependency="Predecessor">
+    </GanttTaskFields>
+    <GanttResourceFields Resources="TaskData.GetResources" Id="ResourceId" Name="ResourceName" Unit="Unit" TResources="TaskData.ResourceData"></GanttResourceFields>
+    <GanttColumns>
+        <GanttColumn Field="Id" Visible=false></GanttColumn>
+        <GanttColumn Field="Subject" HeaderText="Subject" Width="200px" ClipMode="Syncfusion.Blazor.Grids.ClipMode.EllipsisWithTooltip"></GanttColumn>
+        <GanttColumn Field="StartTime" HeaderText="Start Date" Width="150px"></GanttColumn>
+        <GanttColumn Field="EndTime" HeaderText="End Date" Width="150px"></GanttColumn>
+        <GanttColumn Field="Progress" HeaderText="Progress" Width="150px"></GanttColumn>
+        <GanttColumn Field="Priority" HeaderText="Priority" Width="150px" EditType="EditType.DropDownEdit"></GanttColumn>
+        <GanttColumn Field="Status" HeaderText="Status" Width="150px" EditType="EditType.DropDownEdit"></GanttColumn>
+        <GanttColumn Field="Predecessor" HeaderText="Dependency" Width="150px"></GanttColumn>
+    </GanttColumns>
+    <GanttSplitterSettings Position="40%"></GanttSplitterSettings>
+    <GanttTemplates TValue="TaskData">
+        <TaskbarTemplate>
+            @{
+                var task = context as TaskData;
+                var taskModel = GetTaskModelData(task);
+                var progresswidth = taskModel.ProgressWidth;
+                switch (task.Status)
+                {
+                    case "In Progress":
+                        <div class="e-gantt-child-taskbar e-gantt-child-taskbar-inner-div" style="height:37px; background-color: rgba(222, 204, 251, 0.5);outline-color: rgb(201, 167, 244); border-radius:4px">
+                            <div class="e-gantt-child-progressbar-inner-div e-gantt-child-progressbar" style="height:37px;background-color: rgba(222, 204, 251, 1);border-radius:0; width:@(progresswidth+"px")"></div>
+                        </div>
+                        break;
+                    case "Open":
+                        <div class="e-gantt-child-taskbar e-gantt-child-taskbar-inner-div" style="height:37px; background-color: rgba(203, 228, 252, 1);outline-color: rgb(194, 220, 240); border-radius:4px">
+                            <div class="e-gantt-child-progressbar-inner-div e-gantt-child-progressbar" style="height:37px;background-color: rgba(203, 228, 252, 1);border-radius:0; width:@(progresswidth+"px")"></div>
+                        </div>
+                        break;
+                    case "Testing":
+                        <div class="e-gantt-child-taskbar e-gantt-child-taskbar-inner-div" style="height:37px;  background-color: rgba(254, 234, 192, 0.5);outline-color: rgb(244, 218, 168); border-radius:4px">
+                            <div class="e-gantt-child-progressbar-inner-div e-gantt-child-progressbar" style="height:37px;background-color: rgba(254, 234, 192, 1);border-radius:0; width:@(progresswidth+"px")"></div>
+                        </div>
+                        break;
+                    case "Done":
+                        <div class="e-gantt-child-taskbar e-gantt-child-taskbar-inner-div" style="height:37px; background-color: rgba(204, 234, 189, 1);outline-color: rgb(182, 214, 171); border-radius:4px">
+                            <div class="e-gantt-child-progressbar-inner-div e-gantt-child-progressbar" style="height:37px;background-color: rgba(204, 234, 189, 1);border-radius:0; width:@(progresswidth+"px")"></div>
+                        </div>
+                        break;
+                }
+            }
+        </TaskbarTemplate>
+    </GanttTemplates>
+    <GanttEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true" AllowTaskbarEditing="true" Mode="Syncfusion.Blazor.Gantt.EditMode.Dialog"></GanttEditSettings>
+    <GanttEvents OnToolbarClick="ToolbarClickHandler" RowUpdated="RowUpdatedHandler" TaskbarEdited="TaskbarEdited" QueryChartRowInfo="QueryChartRowInfoHandler" RowDataBound="RowDataBoundHandler" TValue="TaskData"></GanttEvents>
+</SfGantt>
+@code {
+    public SfGantt<TaskData>? Gantt;
+    [Parameter]
+    public List<TaskData>? TaskCollection { get; set; }
+    [Parameter]
+    public EventCallback<List<TaskData>> onGanttDataSourceChange { get; set; }
+    [Inject]
+    SyncfusionBlazorService? SyncfusionService { get; set; }
+    private bool AdaptiveUI { get; set; } = false;
+    private IGanttTaskModel<TaskData> GetTaskModelData(TaskData data)
+    {
+        return Gantt.GetRowTaskModel(data);
+    }
+
+    public void ToolbarClickHandler(ClickEventArgs args)
+    {
+        if (args.Item != null && args.Item.Text == "Delete")
+        {
+            var records = Gantt.GetSelectedRecordsAsync();
+            TaskCollection.Remove(records.Result[0]);
+        }
+    }
+    public void RowDataBoundHandler(RowDataBoundEventArgs<TaskData> args)
+    {
+        if(args.Data.Id == -1)
+        {
+            args.Row.AddClass(new string[] { "unassigned" });
+        }
+    }
+    public void QueryChartRowInfoHandler(QueryChartRowInfoEventArgs<TaskData> args)
+    {
+        if (args.Data.Id == -1)
+        {
+            args.Row.AddClass(new string[] { "unassigned" });
+        }
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (SyncfusionService != null)
+            {
+                bool Device = await SyncfusionService.IsDevice();
+                if (Device)
+                {
+                    AdaptiveUI = true;
+                    if (Gantt != null)
+                        await Gantt.RefreshAsync();
+                }
+            }
+        }
+    }
+    public void TaskbarEdited(TaskbarEditedEventArgs<TaskData> args)
+    {
+        if(args.Data != null)
+        {
+            switch (args.Data.Progress)
+            {
+                case 100:
+                    args.Data.Status = "Done";
+                    break;
+                case 0:
+                    args.Data.Status = "Open";
+                    break;
+                default:
+                    if (args.Data.Progress < 100 && args.Data.Progress > 0)
+                    {
+                        args.Data.Status = "In Progress";
+                    }
+                    break;
+            }
+        }
+    }
+
+    public void RowUpdatedHandler(GanttRowUpdatedEventArgs<TaskData> args)
+    {
+        if (args.Data != null)
+        {
+            if (args.Data.Progress == 100)
+            {
+                args.Data.Status = "Done";
+            }
+            if (args.Data.Progress != 0 && args.Data.Status == "Open")
+            {
+                args.Data.Progress = 0;
+            }
+            if (args.Data.Progress < 100 && args.Data.Status == "Done")
+            {
+                args.Data.Progress = 100;
+            }
+            if (args.Data.Progress == 0 && args.Data.Status != "Open")
+            {
+                args.Data.Status = "Open";
+            }
+            if (args.Data.Resources != null && args.Data.Resources.Any())
+            {
+                args.Data.Assignee = args.Data.Resources[0].ResourceName;
+                switch (args.Data.Assignee)
+                {
+                    case "Martin Tamer":
+                        args.Data.ClassName = "e-martintamer";
+                        break;
+                    case "Rose Fuller":
+                        args.Data.ClassName = "e-rosefuller";
+                        break;
+                    case "Margaret Buchanan":
+                        args.Data.ClassName = "e-margaretbuchanan";
+                        break;
+                    case "Fuller King":
+                        args.Data.ClassName = "e-fullerking";
+                        break;
+                    case "Davolio Fuller":
+                        args.Data.ClassName = "e-davoliofuller";
+                        break;
+                }
+            }
+        }
+        onGanttDataSourceChange.InvokeAsync(TaskCollection);
+        if(Gantt !=null)
+        Gantt.RefreshAsync();
+    }
+}
+<style>
+    .e-gantt {
+        overflow-y: auto;
+        height: 100% !important;
+        max-height: 100% !important;
+        width: 100% !important;
+    }
+
+    @@media only screen and (max-width: 700px){
+        .e-gantt-dialog{
+            z-index: 1008 !important;
+            height: 100%;
+        }
+    }
+
+    .unassigned{
+        display:none !important;
+    }
+</style>

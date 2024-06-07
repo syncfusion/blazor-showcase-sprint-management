@@ -1,0 +1,123 @@
+﻿<div class="parent-kanban @(selectedView == "Kanban" ? "e-mb-selected" : "")" @onclick="RenderKanban">
+    <div class="navimage-kanban"></div>
+</div>
+<div class="parent-scheduler @(selectedView == "Scheduler" ? "e-mb-selected" : "")" @onclick="RenderScheduler">
+    <div class="navimage-scheduler"></div>
+</div>
+<div class="parent-gantt @(selectedView == "Gantt" ? "e-mb-selected" : "")" @onclick="RenderGantt">
+    <div class="navimage-gantt"></div>
+</div>
+<div class="parent-grid @(selectedView == "Grid" ? "e-mb-selected" : "")" @onclick="RenderGrid">
+    <div class="navimage-grid"></div>
+</div>
+<style>
+    .parent-kanban {
+        width: 45px;
+        height: 45px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .navimage-kanban {
+        width: 22px;
+        height: 22px;
+        background-image: url("@($"{NavigationManager.BaseUri}css/Images/TaskBoard.png")");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
+    }
+
+    .parent-scheduler {
+        width: 45px;
+        height: 45px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .e-mb-selected {
+        background-color: #0f766e;
+        border-radius: 8px;
+    }
+
+    .parent-kanban:hover,
+    .parent-scheduler:hover,
+    .parent-gantt:hover,
+    .parent-grid:hover {
+        background-color: #0f766e;
+        border-radius: 8px;
+        border: 1px solid white;
+    }
+
+    .navimage-scheduler {
+        width: 22px;
+        height: 22px;
+        background-image: url("@($"{NavigationManager.BaseUri}css/Images/Scheduler.png")");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
+    }
+
+    .parent-gantt {
+        width: 45px;
+        height: 45px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .navimage-gantt {
+        width: 22px;
+        height: 22px;
+        background-image: url("@($"{NavigationManager.BaseUri}css/Images/Gantt.png")");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: contain;
+    }
+
+    .parent-grid {
+        width: 45px;
+        height: 45px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .navimage-grid {
+        width: 22px;
+        height: 22px;
+        background-image: url("@($"{NavigationManager.BaseUri}css/Images/Grid.png")");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
+    }
+
+</style>
+@code {
+    [Parameter]
+    public EventCallback<string> onPageChange { get; set; }
+
+    private string selectedView = "Kanban";
+
+    private async Task RenderKanban()
+    {
+        selectedView = "Kanban";
+        await onPageChange.InvokeAsync("Kanban");
+    }
+    private async Task RenderScheduler()
+    {
+        selectedView = "Scheduler";
+        await onPageChange.InvokeAsync("Scheduler");
+    }
+    private async Task RenderGantt()
+    {
+        selectedView = "Gantt";
+        await onPageChange.InvokeAsync("Gantt");
+    }
+    private async Task RenderGrid()
+    {
+        selectedView = "Grid";
+        await onPageChange.InvokeAsync("Grid");
+    }
+}
