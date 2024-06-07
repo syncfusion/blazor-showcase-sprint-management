@@ -1,0 +1,99 @@
+﻿<SfGrid @ref="Grids" DataSource="@GridData.ToList()" AllowGrouping="true" Toolbar="@(new List<Object>() { "Cancel", "Update" , "Delete", "Edit"})">
+    <GridGroupSettings ShowDropArea="false" Columns="@GroupedColumns">
+        <CaptionTemplate>
+            @{
+                var data = (context as CaptionTemplateContext); 
+                <span>@data.Key</span>
+            }
+        </CaptionTemplate>
+    </GridGroupSettings>
+    <GridEditSettings AllowAdding="true" AllowEditing="true" AllowDeleting="true" Mode="Syncfusion.Blazor.Grids.EditMode.Dialog"></GridEditSettings>
+    <GridColumns>
+        <GridColumn Field=@nameof(TaskData.Id) IsPrimaryKey="true" HeaderText="ID" Visible="false" TextAlign="TextAlign.Center"></GridColumn>
+        <GridColumn Field=@nameof(TaskData.Subject) HeaderText="Subject" Width="230px" ClipMode="Syncfusion.Blazor.Grids.ClipMode.EllipsisWithTooltip" AllowGrouping="false"></GridColumn>
+        <GridColumn Field=@nameof(TaskData.StartTime) HeaderText="Start Date" Format="d" TextAlign="TextAlign.Center" Width="100px" AllowGrouping="false" EditType="EditType.DateTimePickerEdit"></GridColumn>
+        <GridColumn Field=@nameof(TaskData.EndTime) HeaderText="End Date" Format="d" TextAlign="TextAlign.Center" Width="100px" EditType="EditType.DateTimePickerEdit"></GridColumn>
+        <GridColumn Field=@nameof(TaskData.Priority) HeaderText="Priority" TextAlign="TextAlign.Center" Width="120px" EditType="EditType.DropDownEdit"></GridColumn>
+        <GridColumn Field=@nameof(TaskData.Progress) HeaderText="Progress" TextAlign="TextAlign.Center" Width="120px" EditType="EditType.NumericEdit"></GridColumn>
+        <GridColumn Field=@nameof(TaskData.Status) HeaderText="Status" TextAlign="TextAlign.Center" Width="120px" EditType="EditType.DropDownEdit"></GridColumn>
+        <GridColumn Field=@nameof(TaskData.Assignee) EditType="EditType.DropDownEdit" ></GridColumn>
+    </GridColumns>
+    <GridEvents RowUpdating="RowUpdatingHandler" RowDeleted="RowDeletedHandler" RowUpdated="RowUpdatedHandler" TValue="TaskData"></GridEvents>
+</SfGrid>
+@code{
+    public string[] GroupedColumns = new string[] { "Assignee" };
+    public SfGrid<TaskData> Grids;
+    [Parameter]
+    public List<TaskData> GridData { get; set; }
+    [Parameter]
+    public EventCallback<List<TaskData>> onGridDataSourceChange { get; set; }
+
+    public void RowUpdatingHandler(RowUpdatingEventArgs<TaskData> args)
+    {
+        if (args.Data != null)
+        {
+            if (args.Data.Progress > 100 || (args.Data.Progress < 100 && args.Data.Status == "Done"))
+            {
+                args.Data.Progress = 100;
+            }
+            if (args.Data.Progress == 100)
+            {
+                args.Data.Status = "Done";
+            }
+            if (args.Data.Progress == 0 && args.Data.Status != "Open")
+            {
+                args.Data.Status = "Open";
+            }
+            switch (args.Data.Assignee)
+            {
+                case "Martin Tamer":
+                    args.Data.ClassName = "e-martintamer";
+                    break;
+                case "Rose Fuller":
+                    args.Data.ClassName = "e-rosefuller";
+                    break;
+                case "Margaret Buchanan":
+                    args.Data.ClassName = "e-margaretbuchanan";
+                    break;
+                case "Fuller King":
+                    args.Data.ClassName = "e-fullerking";
+                    break;
+                case "Davolio Fuller":
+                    args.Data.ClassName = "e-davoliofuller";
+                    break;
+            }
+            foreach (var resource in TaskData.GetResources)
+            {
+                if (resource.ResourceName == args.Data.Assignee)
+                {
+                    args.Data.Resources[0] = resource;
+                }
+            }
+
+        }
+
+    }
+    public void RowDeletedHandler(RowDeletedEventArgs<TaskData> args)
+    {
+        GridData.Remove(args.Datas[0]);
+        onGridDataSourceChange.InvokeAsync(GridData);
+    }
+    public void RowUpdatedHandler(RowUpdatedEventArgs<TaskData> args)
+    {
+        onGridDataSourceChange.InvokeAsync(GridData);
+    }
+}
+<style>
+    .e-grid {
+        overflow-y: auto;
+        height: 100% !important;
+        max-height: 100% !important;
+        width: 100% !important;
+    }
+
+    .e-dialog.e-device.e-draggable.e-popup-open {
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+</style>

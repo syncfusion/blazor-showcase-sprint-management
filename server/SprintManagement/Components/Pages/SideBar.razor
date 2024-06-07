@@ -1,0 +1,190 @@
+﻿<div class="sb-top-container">
+</div>
+<div class="sb-toolbar-container">
+    <div class="sb-toolbar-kanban @(selectedView == "Kanban" ? "e-sb-selected" : "")" title="Kanban" @onclick="RenderKanban">
+        <div class="navimage-kanban"></div>
+    </div>
+    <div class="sb-toolbar-scheduler @(selectedView == "Scheduler" ? "e-sb-selected" : "")" title="Scheduler" @onclick="RenderScheduler">
+        <div class="navimage-scheduler"></div>
+    </div>
+    <div class="sb-toolbar-gantt @(selectedView == "Gantt" ? "e-sb-selected" : "")" title="Gantt Chart" @onclick="RenderGantt">
+        <div class="navimage-gantt"></div>
+    </div>
+    <div class="sb-toolbar-grid @(selectedView == "Grid" ? "e-sb-selected" : "")" title="Grid" @onclick="RenderGrid">
+        <div class="navimage-grid"></div>
+    </div>
+</div>
+<div class="sb-bottom-container">
+</div>
+<style>
+    .sb-toolbar-kanban{
+        width: 45px;
+        height: 45px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .e-sb-selected{
+        background-color: #0f766e;
+        border-radius: 8px;
+    }
+    .sb-toolbar-kanban:hover,
+    .sb-toolbar-scheduler:hover,
+    .sb-toolbar-gantt:hover,
+    .sb-toolbar-grid:hover {
+        background-color: #0f766e;
+        border-radius: 8px;
+        border: 1px solid white;
+        cursor: pointer;
+    }
+    .sb-toolbar-scheduler{
+        width: 45px;
+        height: 45px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .sb-toolbar-gantt{
+        width: 45px;
+        height: 45px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .sb-toolbar-grid {
+        width: 45px;
+        height: 45px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .sb-top-container{
+        position: absolute;
+        top: 5px;
+        width: 48px;
+        height: 48px;
+        background-image: url("@($"{NavigationManager.BaseUri}css/Images/Group 24.png")");
+        background-repeat: no-repeat;
+        background-size: contain;
+        left: 20%;
+    }
+
+    .sm-sidebar > div {
+        width: 100%;
+        padding: 5px;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .sb-bottom-container{
+        position: absolute;
+        bottom: 5px;
+        width: 48px;
+        height: 48px;
+        border-radius: 48px;
+        background-image: url("@($"{NavigationManager.BaseUri}css/Images/Rectangle 2626.png")");
+        background-repeat: no-repeat;
+        background-size: contain;
+        left: 20%;
+    }
+
+    .sb-toolbar-container{
+        position: absolute;
+        top: 25%;
+        bottom: 25%;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly !important;
+        align-items: center;
+    }
+
+    .navimage-kanban {
+        width: 22px;
+        height: 22px;
+        background-image: url("@($"{NavigationManager.BaseUri}css/Images/TaskBoard.png")");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
+    }
+
+    .navimage-scheduler {
+        width: 22px;
+        height: 22px;
+        background-image: url("@($"{NavigationManager.BaseUri}css/Images/Scheduler.png")");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
+    }
+
+    .navimage-gantt {
+        width: 22px;
+        height: 22px;
+        background-image: url("@($"{NavigationManager.BaseUri}css/Images/Gantt.png")");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: contain;
+    }
+
+    .navimage-grid {
+        width: 22px;
+        height: 22px;
+        background-image: url("@($"{NavigationManager.BaseUri}css/Images/Grid.png")");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
+    }
+
+    @@media (min-width: 700px) and (max-width: 800px) {
+        .sb-bottom-container{
+            left: 0;
+        }
+
+        .sb-top-container {
+            left: 0;
+        }
+    }
+
+    @@media (min-width: 800px) and (max-width: 855px) {
+        .sb-bottom-container {
+            left:13%;
+        }
+        .sb-top-container{
+            left: 13%;
+        }
+    }
+    
+</style>
+
+@code{
+    [Parameter]
+    public EventCallback<string> onPageChange { get; set; }
+
+    private string selectedView = "Kanban"; 
+
+    private async Task RenderKanban()
+    {
+        selectedView = "Kanban";
+        await onPageChange.InvokeAsync("Kanban");
+    }
+    private async Task RenderScheduler()
+    {
+        selectedView = "Scheduler";
+        await onPageChange.InvokeAsync("Scheduler");
+    }
+    private async Task RenderGantt()
+    {
+        selectedView = "Gantt";
+        await onPageChange.InvokeAsync("Gantt");
+    }
+    private async Task RenderGrid()
+    {
+        selectedView = "Grid";
+        await onPageChange.InvokeAsync("Grid");
+    }
+}

@@ -1,0 +1,271 @@
+﻿<SfSchedule TValue="TaskData" @ref="Schedule" @bind-SelectedDate="@CurrentDate" Height="100%" AllowInline="false" AllowMultiDrag="false" @bind-CurrentView="@CurrentView">
+         <ScheduleTemplates>
+        <EditorTemplate>
+            <DataAnnotationsValidator>
+
+            </DataAnnotationsValidator>
+            @{
+             TaskData data = (TaskData)context;
+            <table class="custom-event-editor" width="100%" cellpadding="5">
+                <tbody>
+                    <tr>
+                        <td class="e-textlabel">ID</td>
+                        <td colspan="4">
+                            <SfTextBox CssClass="e-field" Value="@data.Id.ToString()" Enabled="false" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="e-textlabel">Summary</td>
+                        <td colspan="4">
+                            <SfTextBox @ref="SummaryRef" CssClass="e-field" Multiline="true" @bind-Value="@data.Subject" />
+                        </td>
+                    </tr>
+                    <tr>
+                    <td class="e-textlabel">Start Time</td>
+                        <td colspan="4">
+                             <SfDateTimePicker @ref="StartTimeRef"  TValue="DateTime?" @bind-Value="@data.StartTime" ></SfDateTimePicker>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="e-textlabel">End Time</td>
+                        <td colspan="4">
+                            <SfDateTimePicker @ref="EndTimeRef" TValue="DateTime?" @bind-Value="@data.EndTime" ></SfDateTimePicker>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="e-textlabel">Priority</td>
+                        <td colspan="4">
+                           <SfDropDownList @ref="PriorityRef" TValue="string" TItem="DropDownModel" CssClass="e-field" DataSource="@PriorityData" @bind-Value="@data.Priority">
+                                    <DropDownListFieldSettings Text="Value" Value="Value" />
+                           </SfDropDownList>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="e-textlabel">Progress</td>
+                        <td colspan="4">
+                           <SfNumericTextBox @ref="ProgressRef" CssClass="e-field" @bind-Value="@data.Progress" >
+                           <NumericTextBoxEvents ValueChange="NumericValueChanged" TValue="int"></NumericTextBoxEvents>
+                           </SfNumericTextBox>
+                            @if (IsStatusChanged && data.Status == "Done" && data.Progress != 100)
+                            {
+                                <p class="text-danger" style="margin-bottom:0;">Progress must be 100</p>
+                                IsStatusChanged = false;
+                            }
+                            else if (IsStatusChanged && data.Status != "Done" && data.Progress == 100)
+                            {
+                                <p class="text-danger" style="margin-bottom:0;">Progress not must be 100</p>
+                                IsStatusChanged = false;
+                            }
+                            else if (IsStatusChanged && data.Status == "Open" && data.Progress != 0)
+                            {
+                                <p class="text-danger" style="margin-bottom:0;">Progress must be 0</p>
+                                IsStatusChanged = false;
+                            }
+                            else if (IsStatusChanged && data.Status != "Open" && data.Progress == 0)
+                            {
+                                <p class="text-danger" style="margin-bottom:0;">Progress not must be 0</p>
+                                IsStatusChanged = false;
+                            }
+                        </td>
+                    </tr>
+                     <tr>
+                        <td class="e-textlabel">Status</td>
+                        <td colspan="4">
+                            <SfDropDownList @ref="StatusRef" TValue="string" TItem="DropDownModel" CssClass="e-field" DataSource="@StatusData" @bind-Value="@data.Status">
+                                    <DropDownListFieldSettings Text="Value" Value="Value" />
+                                    <DropDownListEvents ValueChange="StatusValueChanged" TValue="string" TItem="DropDownModel"></DropDownListEvents>
+                            </SfDropDownList>
+                                @if (IsProgressChanged && data.Progress == 100 && data.Status != "Done")
+                                {
+                                    <p class="text-danger" style="margin-bottom:0;">Status must be Done</p>
+                                    IsProgressChanged = false;
+                                }
+                                else if (IsProgressChanged && data.Status == "Done" && data.Progress != 100)
+                                {
+                                    <p class="text-danger" style="margin-bottom:0;">Status not must be Done</p>
+                                    IsProgressChanged = false;
+                                }
+                                else if (IsProgressChanged && data.Progress == 0 && data.Status != "Open")
+                                {
+                                    <p class="text-danger" style="margin-bottom:0;">Status must be Open</p>
+                                    IsProgressChanged = false;
+                                }
+                                else if (IsProgressChanged && data.Progress != 0 && data.Status == "Open")
+                                {
+                                    <p class="text-danger" style="margin-bottom:0;">Status not must be Open</p>
+                                    IsProgressChanged = false;
+                                }
+                        </td>
+                    </tr>
+                     <tr>
+                        <td class="e-textlabel">Assignee</td>
+                        <td colspan="4">
+                           <SfDropDownList @ref="AssigneeRef" TValue="string" TItem="DropDownModel" CssClass="e-field" DataSource="@AssigneeData" @bind-Value="@data.Assignee">
+                                    <DropDownListFieldSettings Text="Value" Value="Value" />
+                           </SfDropDownList>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            }
+        </EditorTemplate>
+    </ScheduleTemplates>
+        <ScheduleGroup Resources="@groupData"></ScheduleGroup>
+        <ScheduleResources>
+            <ScheduleResource TItem="Resource" TValue="string" DataSource="@ResourceProjectData" Field="Assignee" Title="Choose Resource" Name="Tasks" TextField="ResourceName" IdField="ResourceName" AllowMultiple="true" ColorField="Color"></ScheduleResource>
+            @* <ScheduleResource TItem="TaskData" TValue="int[]" DataSource="@ScheduleData" Field="Id" Title="Tags" Name="Tasks" IdField="Id" TextField="Subject" GroupIDField="Assignee" ColorField="Color" AllowMultiple="true"> </ScheduleResource>*@
+        </ScheduleResources>
+        <ScheduleViews>
+            <ScheduleView Option="View.TimelineDay"></ScheduleView>
+            <ScheduleView Option="View.TimelineWeek"></ScheduleView>
+            <ScheduleView Option="View.TimelineWorkWeek"></ScheduleView>
+            <ScheduleView Option="View.TimelineMonth"></ScheduleView>
+            <ScheduleView Option="View.TimelineYear"></ScheduleView>
+        </ScheduleViews>
+    <ScheduleEvents TValue="TaskData" OnActionBegin="OnActionBegin" ActionCompleted="OnActionComplete" OnPopupOpen="OnPopupOpen"></ScheduleEvents>
+        <ScheduleEventSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true" DataSource="@ScheduleData">
+        </ScheduleEventSettings>
+</SfSchedule>
+@code {
+    [Parameter]
+    public List<TaskData> ScheduleData { get; set; }
+
+    public SfSchedule<TaskData> Schedule;
+
+    [Parameter]
+    public EventCallback<List<TaskData>> onScheduleDataSourceChange { get; set; }
+    SfDropDownList<string, DropDownModel> StatusRef;
+    SfDropDownList<string, DropDownModel> AssigneeRef;
+    SfDropDownList<string, DropDownModel> PriorityRef;
+    SfTextBox SummaryRef;
+    bool IsProgressChanged { get; set; } = false;
+    bool IsStatusChanged { get; set; } = false;
+    SfNumericTextBox<int> ProgressRef;
+    SfDateTimePicker<DateTime?> StartTimeRef;
+    SfDateTimePicker<DateTime?> EndTimeRef;
+    private class DropDownModel
+    {
+        public int Id { get; set; }
+        public string Value { get; set; }
+    }
+    private List<DropDownModel> StatusData = new List<DropDownModel>() {
+        new DropDownModel { Id = 0, Value = "Open" },
+        new DropDownModel { Id = 1, Value = "In Progress" },
+        new DropDownModel { Id = 2, Value = "Testing" },
+        new DropDownModel { Id = 3, Value = "Done" }
+    };
+    private List<DropDownModel> AssigneeData = new List<DropDownModel>() {
+        new DropDownModel { Id = 0, Value = "Martin Tamer" },
+        new DropDownModel { Id = 1, Value = "Rose Fuller" },
+        new DropDownModel { Id = 2, Value = "Margaret Buchanan" },
+        new DropDownModel { Id = 3, Value = "Fuller King" },
+        new DropDownModel { Id = 4, Value = "Davolio Fuller" },
+    };
+    private List<DropDownModel> PriorityData = new List<DropDownModel>() {
+        new DropDownModel { Id = 0, Value = "Low" },
+        new DropDownModel { Id = 1, Value = "Normal" },
+        new DropDownModel { Id = 2, Value = "Critical" },
+        new DropDownModel { Id = 3, Value = "High" }
+    };
+    private View CurrentView { get; set; } = View.TimelineMonth;
+    private DateTime CurrentDate { get; set; } = new DateTime(2021, 1, 14);
+    private string[] groupData = new string[] { "Tasks" };
+    //private List<TaskData.ResourceData> ResourceProjectData { get; set; } = TaskData.GetResources;
+    private List<TaskData> TasksData { get; set; } = TaskData.SprintData1;
+    public class Resource
+    {
+        public string ResourceName { get; set; }
+        public string Color { get; set; }
+    }
+    private List<Resource> ResourceProjectData { get; set; } = new List<Resource> {
+        new Resource{ ResourceName="Martin Tamer", Color = "#357cd2" },
+        new Resource{ ResourceName="Rose Fuller", Color = "#1aaa55" },
+        new Resource{ ResourceName="Margaret Buchanan", Color = "#8e24aa" },
+        new Resource{ ResourceName="Fuller King", Color = "#df5286" },
+        new Resource{ ResourceName="Davolio Fuller", Color = "#fec200" }
+    };
+    public void OnPopupOpen(PopupOpenEventArgs<TaskData> args)
+    {
+        if (args.Type == PopupType.QuickInfo)
+        {
+            args.Cancel = true;
+        }
+        if (args.Data != null)
+        {
+            args.Data.Id = args.Data.Id == 0 ? TaskData.MaxId + 1 : args.Data.Id;
+            args.Data.StartTime = args.Data.StartTime.Value.Date.Add(new TimeSpan(6, 30, 0));
+            args.Data.EndTime = args.Data.EndTime.Value.Date.Add(new TimeSpan(8, 30, 0));
+            args.Data.Subject = args.Data.Subject == "" ? "New Task" : args.Data.Subject;
+        }
+    }
+   
+    private void NumericValueChanged(Syncfusion.Blazor.Inputs.ChangeEventArgs<int> args)
+    {
+        IsProgressChanged = true;
+    }
+    private void StatusValueChanged(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string, DropDownModel> args)
+    {
+        IsStatusChanged = true;
+    }
+    public void OnActionBegin(Syncfusion.Blazor.Schedule.ActionEventArgs<TaskData> args)
+    {
+        if (args.ChangedRecords != null && args.ChangedRecords.Any())
+        {
+            TaskData data = args.ChangedRecords[0];
+            if (data != null)
+            {
+                if (data.Progress > 100 || (data.Progress < 100 && data.Status == "Done"))
+                {
+                    data.Progress = 100;
+                }
+                if (data.Progress == 100)
+                {
+                    data.Status = "Done";
+                }
+                if (data.Progress == 0 && data.Status != "Open")
+                {
+                    data.Status = "Open";
+                }
+                switch (data.Assignee)
+                {
+                    case "Martin Tamer":
+                        data.ClassName = "e-martintamer";
+                        break;
+                    case "Rose Fuller":
+                        data.ClassName = "e-rosefuller";
+                        break;
+                    case "Margaret Buchanan":
+                        data.ClassName = "e-margaretbuchanan";
+                        break;
+                    case "Fuller King":
+                        data.ClassName = "e-fullerking";
+                        break;
+                    case "Davolio Fuller":
+                        data.ClassName = "e-davoliofuller";
+                        break;
+                }
+                foreach (var resource in TaskData.GetResources)
+                {
+                    if (resource.ResourceName == data.Assignee)
+                    {
+                        data.Resources[0] = resource;
+                    }
+                }
+            }
+        }
+    }
+    public void OnActionComplete(Syncfusion.Blazor.Schedule.ActionEventArgs<TaskData> args)
+    {
+        onScheduleDataSourceChange.InvokeAsync(ScheduleData);
+    }
+}
+
+<style>
+    
+    .e-schedule {
+        overflow-y: auto;
+        height: 100% !important;
+        max-height: 100% !important;
+    }
+
+</style>

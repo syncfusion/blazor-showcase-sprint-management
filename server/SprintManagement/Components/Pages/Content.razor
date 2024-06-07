@@ -1,0 +1,63 @@
+﻿@if (currentPage == "Kanban")
+{
+    @if (isMobile)
+    {
+        <Kanban KanbanData="DataSource" onKanbanDataSourceChange="HandleDataSourceChange">
+        </Kanban>
+    }
+    else
+    {
+        <Kanban KanbanData="DataSource" onKanbanDataSourceChange="HandleDataSourceChange">
+        </Kanban>
+    }
+}
+@if (currentPage == "Scheduler")
+{
+    <Scheduler ScheduleData="DataSource" onScheduleDataSourceChange="HandleDataSourceChange">
+
+    </Scheduler>
+}
+@if (currentPage == "Gantt")
+{
+    <GanttChart TaskCollection="DataSource" onGanttDataSourceChange="HandleDataSourceChange">
+
+    </GanttChart>
+}
+@if (currentPage == "Grid")
+{
+    <Grid GridData="DataSource" onGridDataSourceChange="HandleDataSourceChange">
+
+    </Grid>
+}
+@code{
+    [Parameter]
+    public string currentPage { get; set; } = String.Empty;
+    [Parameter]
+    public List<TaskData>? DataSource { get ; set; }
+    [Parameter]
+    public EventCallback<List<TaskData>> onContentDataSourceChanged { get; set; }
+    private void HandleDataSourceChange(List<TaskData> dataSource)
+    {
+        onContentDataSourceChanged.InvokeAsync(dataSource);
+    }
+    [Inject]
+    SyncfusionBlazorService? SyncfusionService { get; set; }
+    private bool isMobile = false;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            string DeviceMode = await JSRuntime.InvokeAsync<string>("getDeviceMode");
+            if (DeviceMode == "mobile")
+            {
+                isMobile = true;
+                await SyncfusionBlazorService.SetIsDevice(true);
+            }
+            else
+            {
+                isMobile = false;
+            }
+            StateHasChanged();
+        }
+    }
+}

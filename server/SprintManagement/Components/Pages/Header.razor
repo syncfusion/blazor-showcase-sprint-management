@@ -1,0 +1,965 @@
+﻿@* Top Container *@
+<div class="title-container">
+    <div class="extra-circle"></div>
+    <div class="title">
+        Sprint Management
+    </div>
+    <button class="button" @onclick="AddRecord">+ New Task</button>
+    <div class="custom-mobile-div" @onclick="AddRecord"></div>
+    <div class="circle"></div>
+</div>
+
+@if (showDialog)
+{
+    <SfDialog Target="#target" @ref="DialogRef" Width="auto" CssClass="dialog-content" IsModal="true" ShowCloseIcon="true" Visible="true">
+        <DialogTemplates>
+            <Header > Add New Task</Header>
+            <Content>
+                <div id="formId" class="form-horizontal">
+                    <SfDataForm Model="@Model" OnValidSubmit="@ValidSubmit" ValidationDisplayMode="FormValidationDisplay.Tooltip">
+                        <FormValidator>
+                            <DataAnnotationsValidator></DataAnnotationsValidator>
+                        </FormValidator>
+                        <FormItems>
+                        <FormItem Field="@nameof(Model.Id)">
+                        <Template>
+                            <tr>
+                                <td class="e-label" style="padding: 10px;width: 100px;font-size: medium;font-weight:600">ID</td>
+                                <td>
+                                    <SfTextBox Width="200px" CssClass="e-field" Value="@TaskData.MaxId.ToString()" Enabled="false" />
+                                </td>
+                            </tr>
+                        </Template>
+                        </FormItem>
+                        <FormItem Field="@nameof(Model.Subject)">
+                            <Template>
+                            <tr>
+                                <td class="e-label" style="padding: 10px;width: 100px;font-size: medium;font-weight:600">Subject</td>
+                                <td>
+                                    <SfTextBox Width="200px" @ref="SummaryRef" Placeholder="Enter the Subject" CssClass="e-field" @bind-Value="@Model.Subject" />
+                                </td>
+                            </tr>
+                            </Template>
+                        </FormItem>
+                        <FormItem Field="@nameof(Model.StartTime)">
+                            <Template>
+                                <tr>
+                                    <td class="e-label" style="padding: 10px;width: 100px;font-size: medium;font-weight:600">Start Date</td>
+                                    <td>
+                                        <SfDateTimePicker Width="200px" @ref="StartTimeRef" Placeholder="Update Start Date" TValue="DateTime?" @bind-Value="@Model.StartTime"></SfDateTimePicker>
+                                    </td>
+                                </tr>
+                            </Template>
+                        </FormItem>
+                        <FormItem Field="@nameof(Model.EndTime)">
+                            <Template>
+                                    <tr>
+                                        <td class="e-label" style="padding: 10px;width: 100px;font-size: medium;font-weight:600">End Date</td>
+                                        <td>
+                                            <SfDateTimePicker Width="200px" @ref="EndTimeRef" Placeholder="Update End Date" TValue="DateTime?" @bind-Value="@Model.EndTime"></SfDateTimePicker>
+                                        </td>
+                                    </tr>
+                            </Template>
+                        </FormItem>
+                        <FormItem Field="@nameof(Model.Priority)">
+                            <Template>
+                                    <tr>
+                                        <td class="e-label" style="padding: 10px;width: 100px;font-size: medium;font-weight:600">Priority</td>
+                                        <td>
+                                            <SfDropDownList Width="200px" @ref="PriorityRef" TValue="string" Placeholder="Update Priority" TItem="DropDownModel" CssClass="e-field" DataSource="@PriorityData" @bind-Value="@Model.Priority">
+                                                <DropDownListFieldSettings Text="Value" Value="Value" />
+                                            </SfDropDownList>
+                                        </td>
+                                    </tr>           
+                            </Template>
+                         </FormItem>
+                         <FormItem Field="@nameof(Model.Progress)">
+                            <Template>
+                                <tr>
+                                    <td class="e-label" style="padding: 10px;width: 100px;font-size: medium;font-weight:600">Progress</td>
+                                    <td>
+                                        <SfNumericTextBox ID="ProgressTextBox" Width="200px" @ref="ProgressRef" Placeholder="Update Progress" CssClass="e-field" @bind-Value="@Model.Progress" >
+                                            <NumericTextBoxEvents ValueChange="NumericValueChanged" TValue="int">
+                                            </NumericTextBoxEvents>
+                                        </SfNumericTextBox>
+                                        @if (Model.Progress > 100)
+                                        {
+                                           <p class="text-danger" style="margin-bottom:0;">Progress must be less than 100</p>
+                                        }
+                                        @if (IsProgressChanged && Model.Status == "Done" && Model.Progress != 100)
+                                        {
+                                            <p class="text-danger" style="margin-bottom:0;">Progress must be 100</p>
+                                            IsStatusChanged = false;
+                                        }
+                                        else if (IsProgressChanged && Model.Status != "Done" && Model.Progress == 100)
+                                        {
+                                            <p class="text-danger" style="margin-bottom:0;">Progress not must be 100</p>
+                                            IsStatusChanged = false;
+                                        }
+                                        else if (IsProgressChanged && Model.Status == "Open" && Model.Progress != 0)
+                                        {
+                                            <p class="text-danger" style="margin-bottom:0;">Progress must be 0</p>
+                                            IsStatusChanged = false;
+                                        }
+                                        else if (IsProgressChanged && Model.Status != "Open" && Model.Progress == 0)
+                                        {
+                                            <p class="text-danger" style="margin-bottom:0;">Progress not must be 0</p>
+                                            IsStatusChanged = false;
+                                        }
+                                    </td>
+                                </tr>
+                            </Template>
+                        </FormItem>
+                        <FormItem Field="@nameof(Model.Status)">
+                            <Template>
+                                <tr>
+                                    <td class="e-label" style="padding: 10px;width: 100px;font-size: medium;font-weight:600">Status</td>
+                                    <td>
+                                        <SfDropDownList ID="StatusDropDownBox" Width="200px" @ref="StatusRef" Placeholder="Update Status" TValue="string" TItem="DropDownModel" CssClass="e-field" DataSource="@StatusData" @bind-Value="@Model.Status">
+                                            <DropDownListFieldSettings Text="Value" Value="Value" />
+                                             <DropDownListEvents ValueChange="StatusValueChanged" TValue="string" TItem="DropDownModel"></DropDownListEvents>
+                                        </SfDropDownList>
+                                        @if (IsStatusChanged && Model.Progress == 100 && Model.Status != "Done")
+                                        {
+                                            <p class="text-danger" style="margin-bottom:0;">Status must be Done</p>
+                                            IsProgressChanged = false;
+                                        }
+                                        else if (IsStatusChanged &&  Model.Status == "Done" && Model.Progress != 100)
+                                        {
+                                            <p class="text-danger" style="margin-bottom:0;">Status not must be Done</p>
+                                            IsProgressChanged = false;
+                                        }
+                                        else if (IsStatusChanged && Model.Progress == 0 && Model.Status != "Open")
+                                        {
+                                            <p class="text-danger" style="margin-bottom:0;">Status must be Open</p>
+                                            IsProgressChanged = false;
+                                        }
+                                        else if (IsStatusChanged && Model.Progress != 0 && Model.Status == "Open")
+                                        {
+                                            <p class="text-danger" style="margin-bottom:0;">Status not must be Open</p>
+                                            IsProgressChanged = false;
+                                        }
+                                    </td>
+                                </tr>
+                            </Template>
+                        </FormItem>
+                        <FormItem Field="@nameof(Model.Assignee)">
+                            <Template>
+                                <tr>
+                                    <td class="e-label" style="padding: 10px;width: 100px;font-size: medium;font-weight:600">Assignee</td>
+                                    <td>
+                                        <SfDropDownList Width="200px" @ref="AssigneeRef" Placeholder="Update Assignee" TValue="string" TItem="DropDownModel" CssClass="e-field" DataSource="@AssigneeData" @bind-Value="@Model.Assignee">
+                                            <DropDownListFieldSettings Text="Value" Value="Value" />
+                                        </SfDropDownList>
+                                    </td>
+                                </tr>
+                            </Template>
+                        </FormItem>
+                        </FormItems>
+                            <FormButtons>
+                                 <div>
+                                    <div style="display: inline-block; float:left ; margin-left:115px">
+                                        <SfButton IsPrimary="true" Type="ButtonType.Submit">Submit</SfButton>
+                                    </div>
+                                    <div style="float: left; margin-left:50px">
+                                        <SfButton IsPrimary="true" Type="ButtonType.Reset" @onclick="DialogCancel">Cancel</SfButton>
+                                    </div>
+                                </div>
+                            </FormButtons>
+                    </SfDataForm>
+                </div>
+            </Content>
+        </DialogTemplates>
+         <DialogEvents Closed="@DialogClose"></DialogEvents>
+    </SfDialog>
+}
+
+@* End of Top Container *@
+
+
+@* Card Container *@
+@if (DataSource.Any())
+{
+    InprogressCount = TodoCount = TestingCount = DoneCount = 0;
+    foreach (var data in DataSource)
+    {
+        if(data.Id > TaskData.MaxId)
+        {
+            TaskData.MaxId = data.Id;
+        }
+        switch (data.Status)
+        {
+            case "In Progress":
+                ++InprogressCount;
+                break;
+            case "Open":
+                ++TodoCount;
+                break;
+            case "Testing":
+                ++TestingCount;
+                break;
+            case "Done":
+                ++DoneCount;
+                break;
+        }
+    }
+}
+else{
+    InprogressCount = 0;
+    TodoCount = 0;
+    TestingCount = 0;
+    DoneCount = 0;
+}
+<div class="card-container">
+    <div class="inner-card todo">
+        <div class="mainimagetodo"></div>
+        <div class="detailcontainer">
+            <div class="text">TO DO</div>
+            <div class="count">@TodoCount</div>
+        </div>
+    </div>
+    <div class="inner-card inprogress">
+        <div class="mainimageprogress"></div>
+        <div class="detailcontainer">
+            <div class="text change-font">In Progress</div>
+            <div class="count">@InprogressCount</div>
+        </div>
+    </div>
+    <div class="inner-card testing">
+        <div class="mainimagetest"></div>
+        <div class="detailcontainer">
+            <div class="text">Testing</div>
+            <div class="count">@TestingCount</div>
+        </div>
+    </div>
+    <div class="inner-card close">
+        <div class="mainimagedone"></div>
+        <div class="detailcontainer">
+            <div class="text">Done</div>
+            <div class="count">@DoneCount</div>
+        </div>
+    </div>
+</div>
+@* End of the card Container *@
+
+@* Drop down Container *@
+<div class="dropdown-container">
+    <div class="e-dropdown-selector">
+        <SfDropDownList  Width="200px" TItem="DataFields" TValue="string" PopupHeight="230px" @bind-Value="@DropDownValue" DataSource="@Datas">
+            <DropDownListEvents TItem="DataFields" TValue="string" ValueChange="OnChange" />
+                    <DropDownListFieldSettings Text="Text" Value="ID"/>
+        </SfDropDownList> 
+    </div>
+    @* End of Drop down Container *@
+
+
+    @* Custom Drop down Container *@
+    <div id="image-container" class="custom-dropdown">
+        @foreach (var resource in Resources)
+        {
+            <img src="@resource.ImageUrl" alt="@resource.Name" title="@resource.Name" class="@($"circular-image {(resource.Selected ? "e-selected" : "")}")" @onclick="() => ToggleSelected(resource)" />
+        }
+    </div>
+    @* End of Custom Drop down Container *@
+
+    @* Date Tiem Picker component Container *@
+    <div class="e-datetimepicker">
+        <SfDateRangePicker  TValue="DateTime" Format="@FormatString" @bind-StartDate="@Start" @bind-EndDate="@End" FullScreen="true">
+            <DateRangePickerEvents TValue="DateTime"  ValueChange="ValueChangeHandler"></DateRangePickerEvents>
+        </SfDateRangePicker>
+    </div>
+    @* End of Date Time Picker component Container *@
+ </div>
+@code{
+    // Code for the Date Time Picker component //
+    private DateTime Start { get; set; } = new DateTime(2021, 01, 01);
+    private DateTime End { get; set; } = new DateTime(2021, 01, 15);
+    private string FormatString { get; set; } = "dd/MM/yyyy";
+    private void ValueChangeHandler(RangePickerEventArgs<DateTime> args)
+    {
+        UpdateFilterData(selectedResource, args.StartDate, args.EndDate);
+        UpdateDataSource();
+    }
+    // End of the Date Time Picker component // 
+
+
+    // Code for the Cards //
+    private int TodoCount { get; set; } = 0;
+    private int InprogressCount { get; set; } = 0;
+    private int TestingCount { get; set; } = 0;
+    private int DoneCount { get; set; } = 0;
+    // End of the Cards //
+
+
+    // Code for the button component to add the record //
+    SfDropDownList<string, DropDownModel> StatusRef;
+    SfDropDownList<string, DropDownModel> AssigneeRef;
+    SfDropDownList<string, DropDownModel> PriorityRef;
+    SfTextBox SummaryRef;
+    SfDialog DialogRef;
+    bool IsProgressChanged { get; set; } = false;
+    bool IsStatusChanged { get; set; } = false;
+    SfNumericTextBox<int> ProgressRef;
+    SfDateTimePicker<DateTime?> StartTimeRef;
+    SfDateTimePicker<DateTime?> EndTimeRef;
+    private List<Syncfusion.Blazor.Kanban.ColumnModel> columnData = new List<Syncfusion.Blazor.Kanban.ColumnModel>()
+    {
+        new Syncfusion.Blazor.Kanban.ColumnModel(){ HeaderText= "To Do", KeyField= new List<string>() { "Open" } },
+        new Syncfusion.Blazor.Kanban.ColumnModel(){ HeaderText= "In Progress", KeyField= new List<string>() { "In Progress" } },
+        new Syncfusion.Blazor.Kanban.ColumnModel(){ HeaderText= "Testing", KeyField= new List<string>() { "Testing" } },
+        new Syncfusion.Blazor.Kanban.ColumnModel(){ HeaderText= "Done", KeyField=new List<string>() { "Done" } }
+    };
+    private void NumericValueChanged(Syncfusion.Blazor.Inputs.ChangeEventArgs<int> args)
+    {
+        IsProgressChanged = true;
+    }
+    private void StatusValueChanged(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string, DropDownModel> args)
+    {
+        IsStatusChanged = true;
+    }
+    private class DropDownModel
+    {
+        public int Id { get; set; }
+        public string Value { get; set; }
+    }
+    private List<DropDownModel> StatusData = new List<DropDownModel>() {
+        new DropDownModel { Id = 0, Value = "Open" },
+        new DropDownModel { Id = 1, Value = "In Progress" },
+        new DropDownModel { Id = 2, Value = "Testing" },
+        new DropDownModel { Id = 3, Value = "Done" }
+    };
+    private List<DropDownModel> AssigneeData = new List<DropDownModel>() {
+        new DropDownModel { Id = 0, Value = "Martin Tamer" },
+        new DropDownModel { Id = 1, Value = "Rose Fuller" },
+        new DropDownModel { Id = 2, Value = "Margaret Buchanan" },
+        new DropDownModel { Id = 3, Value = "Fuller King" },
+        new DropDownModel { Id = 4, Value = "Davolio Fuller" },
+    };
+    private List<DropDownModel> PriorityData = new List<DropDownModel>() {
+        new DropDownModel { Id = 0, Value = "Low" },
+        new DropDownModel { Id = 1, Value = "Normal" },
+        new DropDownModel { Id = 2, Value = "Critical" },
+        new DropDownModel { Id = 3, Value = "High" }
+    };
+    private bool Visibility { get; set; } = true;
+    private TaskData Model = new TaskData();
+    private void ValidSubmit()
+    {
+        TaskData data = (TaskData)Model;
+        data.Tags = new List<string> { "Bug", "Release Bug" };
+        switch (data.Assignee)
+        {
+            case "Martin Tamer":
+                data.ClassName = "e-martintamer";
+                break;
+            case "Rose Fuller":
+                data.ClassName = "e-rosefuller";
+                break;
+            case "Margaret Buchanan":
+                data.ClassName = "e-margaretbuchanan";
+                break;
+            case "Fuller King":
+                data.ClassName = "e-fullerking";
+                break;
+            case "Davolio Fuller":
+                data.ClassName = "e-davoliofuller";
+                break;
+        }
+        foreach (var resource in TaskData.GetResources)
+        {
+            if (resource.ResourceName == data.Assignee)
+            {
+                data.Resources = new List<TaskData.ResourceData> { resource };
+            }
+        }
+        switch (ChangeValue)
+        {
+            case "Project 1":
+                PreviousData1.Add(data);
+                break;
+            case "Project 2":
+                PreviousData2.Add(data);
+                break;
+            case "Project 3":
+                PreviousData3.Add(data);
+                break;
+        }
+        UpdateFilterData(selectedResource,Start,End);
+        UpdateDataSource();
+        showDialog = false;
+    }
+    private void DialogCancel()
+    {
+        showDialog = false;
+        TaskData.MaxId--;
+    }
+    private void DialogClose(Object args)
+    {
+        showDialog = false;
+        Model = new TaskData();
+        TaskData.MaxId--;
+    }
+
+    private bool showDialog { get; set; } = false;
+    public void AddRecord()
+    {
+        Model = new TaskData();
+        Model.Id = ++TaskData.MaxId;
+        Model.Subject = "New Task";
+        Model.StartTime = new DateTime(2021, 01, 07, 06, 30, 00, 000, DateTimeKind.Utc);
+        Model.EndTime = new DateTime(2021, 01, 10, 08, 30, 00, 000, DateTimeKind.Utc);
+        showDialog = true;
+    }
+    // End of the button component //
+
+
+    // Code for the DropDown component //
+    [Parameter]
+    public List<TaskData> DataSource { get; set; } 
+    [Parameter]
+    public EventCallback<List<TaskData>> onDataSourceChange { get; set; }
+
+    public List<TaskData> PreviousData1 { get; set; } = TaskData.SprintData1;
+    public List<TaskData> PreviousData2 { get; set; } = TaskData.SprintData2;
+    public List<TaskData> PreviousData3 { get; set; } = TaskData.SprintData3;
+    public class DataFields
+    {
+        public string ID { get; set; }
+        public string Text { get; set; }
+    }
+    private List<DataFields> Datas = new List<DataFields>()
+    {
+        new DataFields(){ ID= "DataSource1", Text= "Project 1" },
+        new DataFields(){ ID= "DataSource2", Text= "Project 2" },
+        new DataFields(){ ID= "DataSource3", Text= "Project 3" },
+
+     };
+    public string DropDownValue { get; set; } = "DataSource1";
+    public string ChangeValue { get; set; } = "Project 1";
+    public void OnChange(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string, DataFields> args)
+    {
+        this.ChangeValue = args.ItemData.Text;
+        UpdateDataSource();
+    }
+    //End of the Dropdown Component //
+
+
+    //Code for the Custom DropDown Component//
+    public class Resource
+    {
+        public string Name { get; set; }
+        public string ImageUrl { get; set; }
+        public bool Selected { get; set; }
+    }
+    private Resource? selectedResource { get; set; } = null;
+    private List<Resource> Resources = new List<Resource>
+    {
+        new Resource { Name = "Martin Tamer", ImageUrl = "https://ej2.syncfusion.com/demos/src/gantt/images/Martin%20Tamer.png", Selected = false },
+        new Resource { Name = "Rose Fuller", ImageUrl = "https://ej2.syncfusion.com/demos/src/gantt/images/Rose%20Fuller.png", Selected = false },
+        new Resource { Name = "Margaret Buchanan", ImageUrl = "https://ej2.syncfusion.com/demos/src/gantt/images/Margaret%20Buchanan.png", Selected = false },
+        new Resource { Name = "Fuller King", ImageUrl = "https://ej2.syncfusion.com/demos/src/gantt/images/Fuller%20King.png", Selected = false },
+        new Resource { Name = "Davolio Fuller", ImageUrl = "https://ej2.syncfusion.com/demos/src/gantt/images/Davolio%20Fuller.png", Selected = false }
+    };
+
+    public void ToggleSelected(Resource clickedResource)
+    {
+        foreach (var resource in Resources)
+        {
+            if (resource == clickedResource)
+            {
+                resource.Selected = !resource.Selected;
+            }
+            else
+            {
+                resource.Selected = false;
+            }
+        }
+        if (clickedResource.Selected)
+        {
+            selectedResource = clickedResource;
+        }
+        else
+        {
+            selectedResource = null;
+        }
+        UpdateFilterData(selectedResource, Start, End);
+        UpdateDataSource();
+    }
+    // End of the code for the Custom Drop Down Component//
+
+
+    // Common methods //
+    public void UpdateDataSource()
+    {
+        switch (ChangeValue)
+        {
+            case "Project 1":
+                onDataSourceChange.InvokeAsync(TaskData.SprintData1);
+                break;
+            case "Project 2":
+                onDataSourceChange.InvokeAsync(TaskData.SprintData2);
+                break;
+            case "Project 3":
+                onDataSourceChange.InvokeAsync(TaskData.SprintData3);
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void UpdateFilterData(Resource? selectedResource , DateTime? startDate, DateTime? endDate)
+    {
+        TaskData.SprintData1 = PreviousData1;
+        TaskData.SprintData2 = PreviousData2;
+        TaskData.SprintData3 = PreviousData3;
+        List<TaskData> data1 = new List<TaskData>();
+        List<TaskData> data2 = new List<TaskData>();
+        List<TaskData> data3 = new List<TaskData>();
+        if (selectedResource != null)
+        {
+            foreach (var data in TaskData.SprintData1)
+            {
+                if (data.Assignee == selectedResource.Name && (data.StartTime.Value.Date >= startDate.Value.Date && data.EndTime.Value.Date <= endDate.Value.Date))
+                {
+                    data1.Add(data);
+                }
+            }
+            TaskData.SprintData1 = data1;
+            foreach (var data in TaskData.SprintData2)
+            {
+                if (data.Assignee == selectedResource.Name && (data.StartTime.Value.Date >= startDate.Value.Date && data.EndTime.Value.Date <= endDate.Value.Date))
+                {
+                    data2.Add(data);
+                }
+            }
+            TaskData.SprintData2 = data2;
+            foreach (var data in TaskData.SprintData3)
+            {
+                if (data.Assignee == selectedResource.Name && (data.StartTime.Value.Date >= startDate.Value.Date && data.EndTime.Value.Date <= endDate.Value.Date))
+                {
+                    data3.Add(data);
+                }
+            }
+            TaskData.SprintData3 = data3;
+        }
+        else
+        {
+            foreach (var data in TaskData.SprintData1)
+            {
+                if (data.StartTime.Value.Date >= startDate.Value.Date && data.EndTime.Value.Date <= endDate.Value.Date)
+                {
+                    data1.Add(data);
+                }
+            }
+            TaskData.SprintData1 = data1;
+            foreach (var data in TaskData.SprintData2)
+            {
+                if (data.StartTime.Value.Date >=startDate.Value.Date && data.EndTime.Value.Date <= endDate.Value.Date)
+                {
+                    data2.Add(data);
+                }
+            }
+            TaskData.SprintData2 = data2;
+            foreach (var data in TaskData.SprintData3)
+            {
+                if (data.StartTime.Value.Date >= startDate.Value.Date && data.EndTime.Value.Date <= endDate.Value.Date)
+                {
+                    data3.Add(data);
+                }
+            }
+            TaskData.SprintData3 = data3;
+        }
+    }
+
+    // End of the common method //
+}
+<style>
+    .validation-tooltip {
+        position: relative;
+        top: 5px; /* Adjust as needed */
+    }
+    /* Style for the Top Container*/
+    .title-container{
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    @@media (min-width: 700px) and (max-width: 800px){
+        .title-container {
+            margin-bottom: 5px;
+        }
+    }
+
+    .e-data-form .e-label-position-top{
+        margin-top: 0;
+    }
+    .extra-circle {
+        width: 36px;
+        height: 36px;
+        background-image: url("@($"{NavigationManager.BaseUri}css/Images/Sprintmanagement.png")");
+        background-position: center;
+        background-repeat: no-repeat;
+        margin-right: 10px;
+    }
+
+    @@media only screen and (min-width: 700px) {
+        .extra-circle {
+        display: none;
+        }
+    }
+
+    @@media only screen and (max-width: 700px) {
+        .extra-circle {
+            display: block;
+        }
+    }
+    @@media (min-width: 800px) and (max-width: 855px) {
+        .title-container {
+            margin-bottom: 5px;
+        }
+    }
+    @@media (min-width: 700px) and (max-width: 800px){
+        .title {
+            font-size: 20px;
+        }
+    }
+    .title{
+        font-size: 20px;
+        margin: 0;
+        margin-right: auto;
+        font-family: Inter;
+        font-weight: 600;
+    }
+
+    .button {
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 110px;
+        height: 30px;
+        background-color: #0d9488;
+        color:white;
+        font-family: Inter;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    @@media only screen and (max-width: 700px){
+        .button {
+            display: none;
+        }
+    }
+    @@media only screen and (max-width: 700px){
+        .custom-mobile-div {
+            position: fixed;
+            bottom: 50px;
+            right: 20px;
+            z-index: 1000;
+        }
+    }
+    @@media only screen and (max-width: 700px){
+        .custom-mobile-div:before {
+            content: url("@($"{NavigationManager.BaseUri}css/Images/AddMobile.png")");
+        }
+    }
+    @@media only screen and (max-width: 700px){
+        .circle {
+            display: block;
+        }
+    }
+    @@media only screen and (min-width: 700px){
+        .circle {
+            display: none;
+        }
+    }
+    .circle {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-image: url("@($"{NavigationManager.BaseUri}css/Images/Rectangle 2626.png")");
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: contain;
+    }
+    /* Style for the Top Container*/
+
+    /* Style for the Card Container*/
+    .card-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .inner-card {
+        width: calc(23.7% - 10px);
+        border: 1.5px solid #f0f0f0;
+        padding: 30px 15px 30px 12px;
+        margin-bottom: 24px;
+        box-sizing: border-box;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: row;
+    }
+    .todo{
+        background-color: #C2DCF0;
+    }
+    .inprogress{
+        background-color: #C9A7F4;
+    }
+    .testing{
+        background-color: #F4DAA8;
+    }
+    .close{
+        background-color: #B6D6AB;
+    }
+    @@media (min-width: 800px) and (max-width: 855px){
+        .inner-card {
+            padding: 10px 5px 10px 2px;
+        }
+    }
+    @@media (min-width: 700px) and (max-width: 800px){
+        .inner-card {
+            padding: 10px 5px 10px 2px;
+        }
+    }
+    @@media (max-width: 700px){
+        .inner-card {
+            flex-direction: column;
+            padding: 0;
+            padding-bottom: 0;
+            width: calc(25% - 10px);
+        }
+    }
+
+    .mainimagetodo {
+        background-image: url("@($"{NavigationManager.BaseUri}css/Images/ToDo.png")");
+    }
+
+    .detailcontainer {
+        width: 60%;
+        display: flex;
+        flex-direction: column;
+    }
+    @@media (max-width: 700px){
+        .detailcontainer {
+            height: 66%;
+            width: 100%;
+            padding-bottom: 30px;
+        }
+    }
+
+    .text {
+        width: 100%;
+        font-family: Inter;
+        font-size: 20px;
+        font-weight: 600;
+        line-height: 18px;
+        letter-spacing: 0em;
+        text-align: left;
+        margin-bottom: 28px;
+    }
+
+    .count {
+        width: 100%;
+        font-family: Inter;
+        font-size: 36px;
+        font-weight: 400;
+        line-height: 15px;
+        letter-spacing: 0em;
+        text-align: left;
+    }
+    @@media (min-width: 800px) and (max-width: 855px){
+        .text {
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+    }
+    @@media (min-width: 700px) and (max-width: 800px){
+        .text {
+            font-size: 10px;
+            margin-bottom: 10px;
+        }
+    }
+    @@media (max-width: 700px){
+        .text {
+            height: 33%;
+            font-size: 13px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+    }
+    @@media (max-width: 700px){
+        .change-font {
+            font-size: 12px;
+            padding-right: 1px;
+            white-space: nowrap;
+        }
+    }
+    @@media (min-width: 800px) and (max-width: 855px){
+        .count {
+            font-size: 30px;
+        }
+    }
+    @@media (min-width: 700px) and (max-width: 800px){
+        .count {
+            font-size: 25px;
+        }
+    }
+    @@media (max-width: 700px){
+        .count {
+            height: 33%;
+            font-size: 20px;
+            text-align: center;
+        }
+    }
+
+    .mainimageprogress {
+        background-image: url("@($"{NavigationManager.BaseUri}css/Images/Inprogress.png")");
+    }
+
+    .mainimagetest {
+        background-image: url("@($"{NavigationManager.BaseUri}css/Images/Testing.png")");
+    }
+
+    .mainimagedone {
+        background-image: url("@($"{NavigationManager.BaseUri}css/Images/Done.png")");
+    }
+    .mainimagetodo, .mainimageprogress, .mainimagetest, .mainimagedone {
+        width: 33%;
+        height: 100%;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: contain;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+    }
+    @@media (min-width: 800px) and (max-width: 855px){
+        .mainimagetodo {
+            width: 30%;
+        }
+    }
+    @@media (min-width: 700px) and (max-width: 800px){
+        .mainimagetodo {
+            width: 25%;
+        }
+    }
+    @@media (max-width: 700px){
+        .mainimagetodo, .mainimageprogress, .mainimagetest, .mainimagedone {
+            width: 100%;
+            height: 34%;
+        }     
+    }
+    @@media (min-width: 1400px) {
+        .inner-card {
+            width: calc(23.9% - 10px);
+        }
+        .mainimagetodo,
+        .mainimageprogress,
+        .mainimagetest,
+        .mainimagedone {
+          width: 60px;
+        }
+
+        .detailcontainer{
+            padding-left: 16px;
+        }
+    }
+    @@media (min-width: 701px) and (max-width: 1170px) {
+        .inner-card {
+          width: calc(23% - 10px);
+          padding: 20px 15px 20px 12px;
+        }
+      }
+    /* Style for the Top Container*/
+
+    /* Style for the Drop Down Container*/
+    .dropdown-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    @@media (min-width: 700px) and (max-width: 800px){
+        .dropdown-container {
+            align-items: start;
+        }
+    }
+
+    @@media only screen and (max-width: 700px){
+        .dropdown-container {
+            display: block !important;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+    }
+    
+    @@media only screen and (max-width: 700px){
+        .e-input-group {
+            width: 100% !important;
+            margin-bottom: 5px !important;
+        }
+    }
+
+    @@media only screen and (max-width: 700px) {
+        tr .e-input-group {
+            width: 200px !important;
+            margin-bottom: 0;
+        }
+    }
+    #image-container {
+        position: relative;
+        height: 30px;
+    }
+
+    .custom-dropdown:nth-child(2) {
+        margin-left: auto;
+    }
+
+    .custom-dropdown {
+        width: calc(33% - 10px);
+        max-width: 200px;
+    }
+    .custom-dropdown {
+        display: flex;
+        flex-direction: row;
+        height: 50px;
+        width: 100%;
+    }
+
+    .circular-image {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        margin: 5px;
+        vertical-align: middle;
+        cursor: pointer;
+        margin: 0;
+        padding: 0;
+    }
+
+    .circular-image:hover{
+        box-shadow: 0 0 10px rgba(13, 148, 136, 1);
+        border-radius: 50%;
+    }
+
+    img.circular-image.e-selected {
+        border: 2.5px solid #0d9488;
+    }
+    @@media only screen and (max-width: 700px){
+        .custom-dropdown {
+            width: 100%;
+            max-width: none;
+            margin-right: 0;
+            margin-bottom: 10px;
+        }
+    }
+    /* Style for the Drop Down Container*/
+
+    /* Style for the Dialog Container*/
+    .form-horizontal tr{
+        padding-top:5px;
+    }
+    /* End of the style of the Dialog Container*/
+</style>
