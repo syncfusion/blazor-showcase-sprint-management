@@ -6,14 +6,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
-	<PackageReference Include="Syncfusion.Blazor.Core" Version="26.1.35" />
-	<PackageReference Include="Syncfusion.Blazor.DataForm" Version="26.1.35" />
-	<PackageReference Include="Syncfusion.Blazor.Gantt" Version="26.1.35" />
-	<PackageReference Include="Syncfusion.Blazor.Inputs" Version="26.1.35" />
-	<PackageReference Include="Syncfusion.Blazor.Kanban" Version="26.1.35" />
-	<PackageReference Include="Syncfusion.Blazor.Schedule" Version="26.1.35" />
-	<PackageReference Include="Syncfusion.Blazor.Layouts" Version="26.1.35" />
-	<PackageReference Include="Syncfusion.Blazor.Themes" Version="26.1.35" />
+	<PackageReference Include="Syncfusion.Blazor.Core" Version="*" />
+	<PackageReference Include="Syncfusion.Blazor.DataForm" Version="*" />
+	<PackageReference Include="Syncfusion.Blazor.Gantt" Version="*" />
+	<PackageReference Include="Syncfusion.Blazor.Inputs" Version="*" />
+	<PackageReference Include="Syncfusion.Blazor.Kanban" Version="*" />
+	<PackageReference Include="Syncfusion.Blazor.Schedule" Version="*" />
+	<PackageReference Include="Syncfusion.Blazor.Layouts" Version="*" />
+	<PackageReference Include="Syncfusion.Blazor.Themes" Version="*" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="wwwroot\Script\" />
