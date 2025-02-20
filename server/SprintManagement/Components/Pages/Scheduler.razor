@@ -1,11 +1,11 @@
-﻿<SfSchedule TValue="TaskData" @ref="Schedule" @bind-SelectedDate="@CurrentDate" Height="100%" AllowInline="false" AllowMultiDrag="false" @bind-CurrentView="@CurrentView">
+﻿<SfSchedule TValue="SprintManagmentModel.TaskInfoModel" @ref="Schedule" @bind-SelectedDate="@CurrentDate" Height="100%" AllowInline="false" AllowMultiDrag="false" @bind-CurrentView="@CurrentView">
          <ScheduleTemplates>
         <EditorTemplate>
             <DataAnnotationsValidator>
 
             </DataAnnotationsValidator>
             @{
-             TaskData data = (TaskData)context;
+             SprintManagmentModel.TaskInfoModel data = (SprintManagmentModel.TaskInfoModel)context;
             <table class="custom-event-editor" width="100%" cellpadding="5">
                 <tbody>
                     <tr>
@@ -113,7 +113,6 @@
         <ScheduleGroup Resources="@groupData"></ScheduleGroup>
         <ScheduleResources>
             <ScheduleResource TItem="Resource" TValue="string" DataSource="@ResourceProjectData" Field="Assignee" Title="Choose Resource" Name="Tasks" TextField="ResourceName" IdField="ResourceName" AllowMultiple="true" ColorField="Color"></ScheduleResource>
-            @* <ScheduleResource TItem="TaskData" TValue="int[]" DataSource="@ScheduleData" Field="Id" Title="Tags" Name="Tasks" IdField="Id" TextField="Subject" GroupIDField="Assignee" ColorField="Color" AllowMultiple="true"> </ScheduleResource>*@
         </ScheduleResources>
         <ScheduleViews>
             <ScheduleView Option="View.TimelineDay"></ScheduleView>
@@ -122,18 +121,19 @@
             <ScheduleView Option="View.TimelineMonth"></ScheduleView>
             <ScheduleView Option="View.TimelineYear"></ScheduleView>
         </ScheduleViews>
-    <ScheduleEvents TValue="TaskData" OnActionBegin="OnActionBegin" ActionCompleted="OnActionComplete" OnPopupOpen="OnPopupOpen"></ScheduleEvents>
+    <ScheduleEvents TValue="SprintManagmentModel.TaskInfoModel" OnActionBegin="OnActionBegin" ActionCompleted="OnActionComplete" OnPopupOpen="OnPopupOpen"></ScheduleEvents>
         <ScheduleEventSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true" DataSource="@ScheduleData">
         </ScheduleEventSettings>
 </SfSchedule>
 @code {
     [Parameter]
-    public List<TaskData> ScheduleData { get; set; }
-
-    public SfSchedule<TaskData> Schedule;
+    public List<SprintManagmentModel.TaskInfoModel> ScheduleData { get; set; }
+    [Parameter]
+    public List<SprintManagmentModel.AssignmentModel> AssignmentCollection { get; set; }
+    public SfSchedule<SprintManagmentModel.TaskInfoModel> Schedule;
 
     [Parameter]
-    public EventCallback<List<TaskData>> onScheduleDataSourceChange { get; set; }
+    public EventCallback<SprintManagmentModel.SprintModel> onScheduleDataSourceChange { get; set; }
     SfDropDownList<string, DropDownModel> StatusRef;
     SfDropDownList<string, DropDownModel> AssigneeRef;
     SfDropDownList<string, DropDownModel> PriorityRef;
@@ -170,8 +170,8 @@
     private View CurrentView { get; set; } = View.TimelineMonth;
     private DateTime CurrentDate { get; set; } = new DateTime(2021, 1, 14);
     private string[] groupData = new string[] { "Tasks" };
-    //private List<TaskData.ResourceData> ResourceProjectData { get; set; } = TaskData.GetResources;
-    private List<TaskData> TasksData { get; set; } = TaskData.SprintData1;
+    //private List<SprintManagmentModel.TaskInfoModel.ResourceData> ResourceProjectData { get; set; } = SprintManagmentModel.TaskInfoModel.GetResources;
+    private List<SprintManagmentModel.TaskInfoModel> TasksData { get; set; } = SprintManagmentModel.SprintPlans[1];
     public class Resource
     {
         public string ResourceName { get; set; }
@@ -184,7 +184,7 @@
         new Resource{ ResourceName="Fuller King", Color = "#df5286" },
         new Resource{ ResourceName="Davolio Fuller", Color = "#fec200" }
     };
-    public void OnPopupOpen(PopupOpenEventArgs<TaskData> args)
+    public void OnPopupOpen(PopupOpenEventArgs<SprintManagmentModel.TaskInfoModel> args)
     {
         if (args.Type == PopupType.QuickInfo)
         {
@@ -192,7 +192,7 @@
         }
         if (args.Data != null)
         {
-            args.Data.Id = args.Data.Id == 0 ? TaskData.MaxId + 1 : args.Data.Id;
+            args.Data.Id = args.Data.Id == 0 ? SprintManagmentModel.MaxId + 1 : args.Data.Id;
             args.Data.StartTime = args.Data.StartTime.Value.Date.Add(new TimeSpan(6, 30, 0));
             args.Data.EndTime = args.Data.EndTime.Value.Date.Add(new TimeSpan(8, 30, 0));
             args.Data.Subject = args.Data.Subject == "" ? "New Task" : args.Data.Subject;
@@ -207,11 +207,11 @@
     {
         IsStatusChanged = true;
     }
-    public void OnActionBegin(Syncfusion.Blazor.Schedule.ActionEventArgs<TaskData> args)
+    public void OnActionBegin(Syncfusion.Blazor.Schedule.ActionEventArgs<SprintManagmentModel.TaskInfoModel> args)
     {
         if (args.ChangedRecords != null && args.ChangedRecords.Any())
         {
-            TaskData data = args.ChangedRecords[0];
+            SprintManagmentModel.TaskInfoModel data = args.ChangedRecords[0];
             if (data != null)
             {
                 if (data.Progress > 100 || (data.Progress < 100 && data.Status == "Done"))
@@ -244,19 +244,35 @@
                         data.ClassName = "e-davoliofuller";
                         break;
                 }
-                foreach (var resource in TaskData.GetResources)
+                foreach (var resource in SprintManagmentModel.ResourcesCollection)
                 {
                     if (resource.ResourceName == data.Assignee)
                     {
-                        data.Resources[0] = resource;
+                        SprintManagmentModel.AssignmentModel assignmentRecord = AssignmentCollection.FirstOrDefault(s => s.TaskId == data.Id);
+                        if (assignmentRecord != null)
+                        {
+                            assignmentRecord.ResourceId = resource.ResourceId;
+                        }
                     }
                 }
             }
         }
     }
-    public void OnActionComplete(Syncfusion.Blazor.Schedule.ActionEventArgs<TaskData> args)
+    public void OnActionComplete(Syncfusion.Blazor.Schedule.ActionEventArgs<SprintManagmentModel.TaskInfoModel> args)
     {
-        onScheduleDataSourceChange.InvokeAsync(ScheduleData);
+        if(args.DeletedRecords != null && args.DeletedRecords.Any())
+        {
+            foreach (var record in args.DeletedRecords)
+            {
+                var deleteRecord = ScheduleData.FirstOrDefault(s => s.Id == record.Id);
+                if (deleteRecord != null)
+                {
+                    ScheduleData.Remove(deleteRecord);
+                }
+            }
+        }
+        var projectCollection = new SprintManagmentModel.SprintModel { ProjectCollection = ScheduleData, ResourceAssignmentCollection = AssignmentCollection };
+        onScheduleDataSourceChange.InvokeAsync(projectCollection);
     }
 }
 
