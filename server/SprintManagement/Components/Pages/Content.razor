@@ -2,30 +2,30 @@
 {
     @if (isMobile)
     {
-        <Kanban KanbanData="DataSource" onKanbanDataSourceChange="HandleDataSourceChange">
+        <Kanban KanbanData="DataSource" AssignmentCollection=AssignmentCollection onKanbanDataSourceChange="HandleDataSourceChange">
         </Kanban>
     }
     else
     {
-        <Kanban KanbanData="DataSource" onKanbanDataSourceChange="HandleDataSourceChange">
+        <Kanban KanbanData="DataSource" AssignmentCollection=AssignmentCollection onKanbanDataSourceChange="HandleDataSourceChange">
         </Kanban>
     }
 }
 @if (currentPage == "Scheduler")
 {
-    <Scheduler ScheduleData="DataSource" onScheduleDataSourceChange="HandleDataSourceChange">
+    <Scheduler ScheduleData="DataSource" AssignmentCollection=AssignmentCollection onScheduleDataSourceChange="HandleDataSourceChange">
 
     </Scheduler>
 }
 @if (currentPage == "Gantt")
 {
-    <GanttChart TaskCollection="DataSource" onGanttDataSourceChange="HandleDataSourceChange">
+    <GanttChart TaskCollection="DataSource" AssignmentCollection=AssignmentCollection onGanttDataSourceChange="HandleDataSourceChange">
 
     </GanttChart>
 }
 @if (currentPage == "Grid")
 {
-    <Grid GridData="DataSource" onGridDataSourceChange="HandleDataSourceChange">
+    <Grid GridData="DataSource" AssignmentCollection=AssignmentCollection onGridDataSourceChange="HandleDataSourceChange">
 
     </Grid>
 }
@@ -33,12 +33,14 @@
     [Parameter]
     public string currentPage { get; set; } = String.Empty;
     [Parameter]
-    public List<TaskData>? DataSource { get ; set; }
+    public List<SprintManagmentModel.TaskInfoModel>? DataSource { get ; set; }
     [Parameter]
-    public EventCallback<List<TaskData>> onContentDataSourceChanged { get; set; }
-    private void HandleDataSourceChange(List<TaskData> dataSource)
+    public List<SprintManagmentModel.AssignmentModel> AssignmentCollection { get; set; }
+    [Parameter]
+    public EventCallback<SprintManagmentModel.SprintModel> onContentDataSourceChanged { get; set; }
+    private void HandleDataSourceChange(SprintManagmentModel.SprintModel collection)
     {
-        onContentDataSourceChanged.InvokeAsync(dataSource);
+        onContentDataSourceChanged.InvokeAsync(collection);
     }
     [Inject]
     SyncfusionBlazorService? SyncfusionService { get; set; }

@@ -21,48 +21,48 @@
                             <DataAnnotationsValidator></DataAnnotationsValidator>
                         </FormValidator>
                         <FormItems>
-                        <FormItem Field="@nameof(Model.Id)">
-                        <Template>
-                            <tr>
-                                <td class="e-label" style="padding: 10px;width: 100px;font-size: medium;font-weight:600">ID</td>
-                                <td>
-                                    <SfTextBox Width="200px" CssClass="e-field" Value="@TaskData.MaxId.ToString()" Enabled="false" />
-                                </td>
-                            </tr>
-                        </Template>
-                        </FormItem>
-                        <FormItem Field="@nameof(Model.Subject)">
-                            <Template>
-                            <tr>
-                                <td class="e-label" style="padding: 10px;width: 100px;font-size: medium;font-weight:600">Subject</td>
-                                <td>
-                                    <SfTextBox Width="200px" @ref="SummaryRef" Placeholder="Enter the Subject" CssClass="e-field" @bind-Value="@Model.Subject" />
-                                </td>
-                            </tr>
-                            </Template>
-                        </FormItem>
-                        <FormItem Field="@nameof(Model.StartTime)">
-                            <Template>
-                                <tr>
-                                    <td class="e-label" style="padding: 10px;width: 100px;font-size: medium;font-weight:600">Start Date</td>
-                                    <td>
-                                        <SfDateTimePicker Width="200px" @ref="StartTimeRef" Placeholder="Update Start Date" TValue="DateTime?" @bind-Value="@Model.StartTime"></SfDateTimePicker>
-                                    </td>
-                                </tr>
-                            </Template>
-                        </FormItem>
-                        <FormItem Field="@nameof(Model.EndTime)">
-                            <Template>
+                            <FormItem Field="@nameof(Model.Id)">
+                                <Template>
+                                    <tr>
+                                        <td class="e-label" style="padding: 10px;width: 100px;font-size: medium;font-weight:600">ID</td>
+                                        <td>
+                                            <SfTextBox Width="200px" CssClass="e-field" Value="@SprintManagmentModel.MaxId.ToString()" Enabled="false" />
+                                        </td>
+                                    </tr>
+                                </Template>
+                            </FormItem>
+                            <FormItem Field="@nameof(Model.Subject)">
+                                <Template>
+                                    <tr>
+                                        <td class="e-label" style="padding: 10px;width: 100px;font-size: medium;font-weight:600">Subject</td>
+                                        <td>
+                                            <SfTextBox Width="200px" @ref="SummaryRef" Placeholder="Enter the Subject" CssClass="e-field" @bind-Value="@Model.Subject" />
+                                        </td>
+                                    </tr>
+                                </Template>
+                            </FormItem>
+                            <FormItem Field="@nameof(Model.StartTime)">
+                                <Template>
+                                    <tr>
+                                        <td class="e-label" style="padding: 10px;width: 100px;font-size: medium;font-weight:600">Start Date</td>
+                                        <td>
+                                            <SfDateTimePicker Width="200px" @ref="StartTimeRef" Placeholder="Update Start Date" TValue="DateTime?" @bind-Value="@Model.StartTime"></SfDateTimePicker>
+                                        </td>
+                                    </tr>
+                                </Template>
+                            </FormItem>
+                            <FormItem Field="@nameof(Model.EndTime)">
+                                <Template>
                                     <tr>
                                         <td class="e-label" style="padding: 10px;width: 100px;font-size: medium;font-weight:600">End Date</td>
                                         <td>
                                             <SfDateTimePicker Width="200px" @ref="EndTimeRef" Placeholder="Update End Date" TValue="DateTime?" @bind-Value="@Model.EndTime"></SfDateTimePicker>
                                         </td>
                                     </tr>
-                            </Template>
-                        </FormItem>
-                        <FormItem Field="@nameof(Model.Priority)">
-                            <Template>
+                                </Template>
+                            </FormItem>
+                            <FormItem Field="@nameof(Model.Priority)">
+                                <Template>
                                     <tr>
                                         <td class="e-label" style="padding: 10px;width: 100px;font-size: medium;font-weight:600">Priority</td>
                                         <td>
@@ -71,93 +71,93 @@
                                             </SfDropDownList>
                                         </td>
                                     </tr>           
-                            </Template>
-                         </FormItem>
-                         <FormItem Field="@nameof(Model.Progress)">
-                            <Template>
-                                <tr>
-                                    <td class="e-label" style="padding: 10px;width: 100px;font-size: medium;font-weight:600">Progress</td>
-                                    <td>
-                                        <SfNumericTextBox ID="ProgressTextBox" Width="200px" @ref="ProgressRef" Placeholder="Update Progress" CssClass="e-field" @bind-Value="@Model.Progress" >
-                                            <NumericTextBoxEvents ValueChange="NumericValueChanged" TValue="int">
-                                            </NumericTextBoxEvents>
-                                        </SfNumericTextBox>
-                                        @if (Model.Progress > 100)
-                                        {
-                                           <p class="text-danger" style="margin-bottom:0;">Progress must be less than 100</p>
-                                        }
-                                        @if (IsProgressChanged && Model.Status == "Done" && Model.Progress != 100)
-                                        {
-                                            <p class="text-danger" style="margin-bottom:0;">Progress must be 100</p>
-                                            IsStatusChanged = false;
-                                        }
-                                        else if (IsProgressChanged && Model.Status != "Done" && Model.Progress == 100)
-                                        {
-                                            <p class="text-danger" style="margin-bottom:0;">Progress not must be 100</p>
-                                            IsStatusChanged = false;
-                                        }
-                                        else if (IsProgressChanged && Model.Status == "Open" && Model.Progress != 0)
-                                        {
-                                            <p class="text-danger" style="margin-bottom:0;">Progress must be 0</p>
-                                            IsStatusChanged = false;
-                                        }
-                                        else if (IsProgressChanged && Model.Status != "Open" && Model.Progress == 0)
-                                        {
-                                            <p class="text-danger" style="margin-bottom:0;">Progress not must be 0</p>
-                                            IsStatusChanged = false;
-                                        }
-                                    </td>
-                                </tr>
-                            </Template>
-                        </FormItem>
-                        <FormItem Field="@nameof(Model.Status)">
-                            <Template>
-                                <tr>
-                                    <td class="e-label" style="padding: 10px;width: 100px;font-size: medium;font-weight:600">Status</td>
-                                    <td>
-                                        <SfDropDownList ID="StatusDropDownBox" Width="200px" @ref="StatusRef" Placeholder="Update Status" TValue="string" TItem="DropDownModel" CssClass="e-field" DataSource="@StatusData" @bind-Value="@Model.Status">
-                                            <DropDownListFieldSettings Text="Value" Value="Value" />
-                                             <DropDownListEvents ValueChange="StatusValueChanged" TValue="string" TItem="DropDownModel"></DropDownListEvents>
-                                        </SfDropDownList>
-                                        @if (IsStatusChanged && Model.Progress == 100 && Model.Status != "Done")
-                                        {
-                                            <p class="text-danger" style="margin-bottom:0;">Status must be Done</p>
-                                            IsProgressChanged = false;
-                                        }
-                                        else if (IsStatusChanged &&  Model.Status == "Done" && Model.Progress != 100)
-                                        {
-                                            <p class="text-danger" style="margin-bottom:0;">Status not must be Done</p>
-                                            IsProgressChanged = false;
-                                        }
-                                        else if (IsStatusChanged && Model.Progress == 0 && Model.Status != "Open")
-                                        {
-                                            <p class="text-danger" style="margin-bottom:0;">Status must be Open</p>
-                                            IsProgressChanged = false;
-                                        }
-                                        else if (IsStatusChanged && Model.Progress != 0 && Model.Status == "Open")
-                                        {
-                                            <p class="text-danger" style="margin-bottom:0;">Status not must be Open</p>
-                                            IsProgressChanged = false;
-                                        }
-                                    </td>
-                                </tr>
-                            </Template>
-                        </FormItem>
-                        <FormItem Field="@nameof(Model.Assignee)">
-                            <Template>
-                                <tr>
-                                    <td class="e-label" style="padding: 10px;width: 100px;font-size: medium;font-weight:600">Assignee</td>
-                                    <td>
-                                        <SfDropDownList Width="200px" @ref="AssigneeRef" Placeholder="Update Assignee" TValue="string" TItem="DropDownModel" CssClass="e-field" DataSource="@AssigneeData" @bind-Value="@Model.Assignee">
-                                            <DropDownListFieldSettings Text="Value" Value="Value" />
-                                        </SfDropDownList>
-                                    </td>
-                                </tr>
-                            </Template>
-                        </FormItem>
-                        </FormItems>
+                                </Template>
+                            </FormItem>
+                            <FormItem Field="@nameof(Model.Progress)">
+                                <Template>
+                                    <tr>
+                                        <td class="e-label" style="padding: 10px;width: 100px;font-size: medium;font-weight:600">Progress</td>
+                                        <td>
+                                            <SfNumericTextBox ID="ProgressTextBox" Width="200px" @ref="ProgressRef" Placeholder="Update Progress" CssClass="e-field" @bind-Value="@Model.Progress" >
+                                                <NumericTextBoxEvents ValueChange="NumericValueChanged" TValue="int">
+                                                </NumericTextBoxEvents>
+                                            </SfNumericTextBox>
+                                            @if (Model.Progress > 100)
+                                                {
+                                                    <p class="text-danger" style="margin-bottom:0;">Progress must be less than 100</p>
+                                                }
+                                                @if (IsProgressChanged && Model.Status == "Done" && Model.Progress != 100)
+                                                {
+                                                    <p class="text-danger" style="margin-bottom:0;">Progress must be 100</p>
+                                                    IsStatusChanged = false;
+                                                }
+                                                else if (IsProgressChanged && Model.Status != "Done" && Model.Progress == 100)
+                                                {
+                                                    <p class="text-danger" style="margin-bottom:0;">Progress not must be 100</p>
+                                                    IsStatusChanged = false;
+                                                }
+                                                else if (IsProgressChanged && Model.Status == "Open" && Model.Progress != 0)
+                                                {
+                                                    <p class="text-danger" style="margin-bottom:0;">Progress must be 0</p>
+                                                    IsStatusChanged = false;
+                                                }
+                                                else if (IsProgressChanged && Model.Status != "Open" && Model.Progress == 0)
+                                                {
+                                                    <p class="text-danger" style="margin-bottom:0;">Progress not must be 0</p>
+                                                    IsStatusChanged = false;
+                                                }
+                                            </td>
+                                        </tr>
+                                    </Template>
+                                </FormItem>
+                                <FormItem Field="@nameof(Model.Status)">
+                                    <Template>
+                                        <tr>
+                                            <td class="e-label" style="padding: 10px;width: 100px;font-size: medium;font-weight:600">Status</td>
+                                            <td>
+                                                <SfDropDownList ID="StatusDropDownBox" Width="200px" @ref="StatusRef" Placeholder="Update Status" TValue="string" TItem="DropDownModel" CssClass="e-field" DataSource="@StatusData" @bind-Value="@Model.Status">
+                                                    <DropDownListFieldSettings Text="Value" Value="Value" />
+                                                    <DropDownListEvents ValueChange="StatusValueChanged" TValue="string" TItem="DropDownModel"></DropDownListEvents>
+                                                </SfDropDownList>
+                                                @if (IsStatusChanged && Model.Progress == 100 && Model.Status != "Done")
+                                                {
+                                                    <p class="text-danger" style="margin-bottom:0;">Status must be Done</p>
+                                                    IsProgressChanged = false;
+                                                }
+                                                else if (IsStatusChanged &&  Model.Status == "Done" && Model.Progress != 100)
+                                                {
+                                                    <p class="text-danger" style="margin-bottom:0;">Status not must be Done</p>
+                                                    IsProgressChanged = false;
+                                                }
+                                                else if (IsStatusChanged && Model.Progress == 0 && Model.Status != "Open")
+                                                {
+                                                    <p class="text-danger" style="margin-bottom:0;">Status must be Open</p>
+                                                    IsProgressChanged = false;
+                                                }
+                                                else if (IsStatusChanged && Model.Progress != 0 && Model.Status == "Open")
+                                                {
+                                                    <p class="text-danger" style="margin-bottom:0;">Status not must be Open</p>
+                                                    IsProgressChanged = false;
+                                                }
+                                            </td>
+                                        </tr>
+                                    </Template>
+                                </FormItem>
+                                <FormItem Field="@nameof(Model.Assignee)">
+                                    <Template>
+                                        <tr>
+                                            <td class="e-label" style="padding: 10px;width: 100px;font-size: medium;font-weight:600">Assignee</td>
+                                            <td>
+                                                <SfDropDownList Width="200px" @ref="AssigneeRef" Placeholder="Update Assignee" TValue="string" TItem="DropDownModel" CssClass="e-field" DataSource="@AssigneeData" @bind-Value="@Model.Assignee">
+                                                    <DropDownListFieldSettings Text="Value" Value="Value" />
+                                                </SfDropDownList>
+                                            </td>
+                                        </tr>
+                                    </Template>
+                                </FormItem>
+                            </FormItems>
                             <FormButtons>
-                                 <div>
+                                <div>
                                     <div style="display: inline-block; float:left ; margin-left:115px">
                                         <SfButton IsPrimary="true" Type="ButtonType.Submit">Submit</SfButton>
                                     </div>
@@ -166,12 +166,12 @@
                                     </div>
                                 </div>
                             </FormButtons>
-                    </SfDataForm>
-                </div>
-            </Content>
-        </DialogTemplates>
-         <DialogEvents Closed="@DialogClose"></DialogEvents>
-    </SfDialog>
+                        </SfDataForm>
+                    </div>
+                </Content>
+            </DialogTemplates>
+            <DialogEvents Closed="@DialogClose"></DialogEvents>
+        </SfDialog>
 }
 
 @* End of Top Container *@
@@ -183,9 +183,9 @@
     InprogressCount = TodoCount = TestingCount = DoneCount = 0;
     foreach (var data in DataSource)
     {
-        if(data.Id > TaskData.MaxId)
+        if(data.Id > SprintManagmentModel.MaxId)
         {
-            TaskData.MaxId = data.Id;
+            SprintManagmentModel.MaxId = data.Id;
         }
         switch (data.Status)
         {
@@ -247,7 +247,7 @@ else{
     <div class="e-dropdown-selector">
         <SfDropDownList  Width="200px" TItem="DataFields" TValue="string" PopupHeight="230px" @bind-Value="@DropDownValue" DataSource="@Datas">
             <DropDownListEvents TItem="DataFields" TValue="string" ValueChange="OnChange" />
-                    <DropDownListFieldSettings Text="Text" Value="ID"/>
+            <DropDownListFieldSettings Text="Text" Value="ID"/>
         </SfDropDownList> 
     </div>
     @* End of Drop down Container *@
@@ -269,7 +269,7 @@ else{
         </SfDateRangePicker>
     </div>
     @* End of Date Time Picker component Container *@
- </div>
+</div>
 @code{
     // Code for the Date Time Picker component //
     private DateTime Start { get; set; } = new DateTime(2021, 01, 01);
@@ -342,10 +342,10 @@ else{
         new DropDownModel { Id = 3, Value = "High" }
     };
     private bool Visibility { get; set; } = true;
-    private TaskData Model = new TaskData();
+    private SprintManagmentModel.TaskInfoModel Model = new SprintManagmentModel.TaskInfoModel();
     private void ValidSubmit()
     {
-        TaskData data = (TaskData)Model;
+        SprintManagmentModel.TaskInfoModel data = (SprintManagmentModel.TaskInfoModel)Model;
         data.Tags = new List<string> { "Bug", "Release Bug" };
         switch (data.Assignee)
         {
@@ -365,11 +365,11 @@ else{
                 data.ClassName = "e-davoliofuller";
                 break;
         }
-        foreach (var resource in TaskData.GetResources)
+        foreach (var resource in SprintManagmentModel.ResourcesCollection)
         {
             if (resource.ResourceName == data.Assignee)
             {
-                data.Resources = new List<TaskData.ResourceData> { resource };
+                AssignmentCollection.Add(new SprintManagmentModel.AssignmentModel() { PrimaryId = AssignmentCollection.Count + 1, TaskId = data.Id, ResourceId = resource.ResourceId });
             }
         }
         switch (ChangeValue)
@@ -391,20 +391,20 @@ else{
     private void DialogCancel()
     {
         showDialog = false;
-        TaskData.MaxId--;
+        SprintManagmentModel.MaxId--;
     }
     private void DialogClose(Object args)
     {
         showDialog = false;
-        Model = new TaskData();
-        TaskData.MaxId--;
+        Model = new SprintManagmentModel.TaskInfoModel();
+        SprintManagmentModel.MaxId--;
     }
 
     private bool showDialog { get; set; } = false;
     public void AddRecord()
     {
-        Model = new TaskData();
-        Model.Id = ++TaskData.MaxId;
+        Model = new SprintManagmentModel.TaskInfoModel();
+        Model.Id = ++SprintManagmentModel.MaxId;
         Model.Subject = "New Task";
         Model.StartTime = new DateTime(2021, 01, 07, 06, 30, 00, 000, DateTimeKind.Utc);
         Model.EndTime = new DateTime(2021, 01, 10, 08, 30, 00, 000, DateTimeKind.Utc);
@@ -415,13 +415,15 @@ else{
 
     // Code for the DropDown component //
     [Parameter]
-    public List<TaskData> DataSource { get; set; } 
+    public List<SprintManagmentModel.TaskInfoModel> DataSource { get; set; } 
     [Parameter]
-    public EventCallback<List<TaskData>> onDataSourceChange { get; set; }
+    public List<SprintManagmentModel.AssignmentModel>? AssignmentCollection { get; set; }
+    [Parameter]
+    public EventCallback<SprintManagmentModel.SprintModel> onDataSourceChange { get; set; }
 
-    public List<TaskData> PreviousData1 { get; set; } = TaskData.SprintData1;
-    public List<TaskData> PreviousData2 { get; set; } = TaskData.SprintData2;
-    public List<TaskData> PreviousData3 { get; set; } = TaskData.SprintData3;
+    public List<SprintManagmentModel.TaskInfoModel> PreviousData1 { get; set; } = SprintManagmentModel.SprintPlans[1];
+    public List<SprintManagmentModel.TaskInfoModel> PreviousData2 { get; set; } = SprintManagmentModel.SprintPlans[2];
+    public List<SprintManagmentModel.TaskInfoModel> PreviousData3 { get; set; } = SprintManagmentModel.SprintPlans[3];
     public class DataFields
     {
         public string ID { get; set; }
@@ -491,16 +493,20 @@ else{
     // Common methods //
     public void UpdateDataSource()
     {
+        SprintManagmentModel.SprintModel projectCollection = new SprintManagmentModel.SprintModel();
         switch (ChangeValue)
         {
             case "Project 1":
-                onDataSourceChange.InvokeAsync(TaskData.SprintData1);
+                projectCollection = new SprintManagmentModel.SprintModel { ProjectCollection = SprintManagmentModel.SprintPlans[1], ResourceAssignmentCollection = SprintManagmentModel.AssignmentCollections[1] };
+                onDataSourceChange.InvokeAsync(projectCollection);
                 break;
             case "Project 2":
-                onDataSourceChange.InvokeAsync(TaskData.SprintData2);
+                projectCollection = new SprintManagmentModel.SprintModel { ProjectCollection = SprintManagmentModel.SprintPlans[2], ResourceAssignmentCollection = SprintManagmentModel.AssignmentCollections[2] };
+                onDataSourceChange.InvokeAsync(projectCollection);
                 break;
             case "Project 3":
-                onDataSourceChange.InvokeAsync(TaskData.SprintData3);
+                projectCollection = new SprintManagmentModel.SprintModel { ProjectCollection = SprintManagmentModel.SprintPlans[3], ResourceAssignmentCollection = SprintManagmentModel.AssignmentCollections[3] };
+                onDataSourceChange.InvokeAsync(projectCollection);
                 break;
             default:
                 break;
@@ -509,65 +515,65 @@ else{
 
     public void UpdateFilterData(Resource? selectedResource , DateTime? startDate, DateTime? endDate)
     {
-        TaskData.SprintData1 = PreviousData1;
-        TaskData.SprintData2 = PreviousData2;
-        TaskData.SprintData3 = PreviousData3;
-        List<TaskData> data1 = new List<TaskData>();
-        List<TaskData> data2 = new List<TaskData>();
-        List<TaskData> data3 = new List<TaskData>();
+        SprintManagmentModel.SprintPlans[1] = PreviousData1;
+        SprintManagmentModel.SprintPlans[2] = PreviousData2;
+        SprintManagmentModel.SprintPlans[3] = PreviousData3;
+        List<SprintManagmentModel.TaskInfoModel> data1 = new List<SprintManagmentModel.TaskInfoModel>();
+        List<SprintManagmentModel.TaskInfoModel> data2 = new List<SprintManagmentModel.TaskInfoModel>();
+        List<SprintManagmentModel.TaskInfoModel> data3 = new List<SprintManagmentModel.TaskInfoModel>();
         if (selectedResource != null)
         {
-            foreach (var data in TaskData.SprintData1)
+            foreach (var data in SprintManagmentModel.SprintPlans[1])
             {
                 if (data.Assignee == selectedResource.Name && (data.StartTime.Value.Date >= startDate.Value.Date && data.EndTime.Value.Date <= endDate.Value.Date))
                 {
                     data1.Add(data);
                 }
             }
-            TaskData.SprintData1 = data1;
-            foreach (var data in TaskData.SprintData2)
+            SprintManagmentModel.SprintPlans[1] = data1;
+            foreach (var data in SprintManagmentModel.SprintPlans[2])
             {
                 if (data.Assignee == selectedResource.Name && (data.StartTime.Value.Date >= startDate.Value.Date && data.EndTime.Value.Date <= endDate.Value.Date))
                 {
                     data2.Add(data);
                 }
             }
-            TaskData.SprintData2 = data2;
-            foreach (var data in TaskData.SprintData3)
+            SprintManagmentModel.SprintPlans[2] = data2;
+            foreach (var data in SprintManagmentModel.SprintPlans[3])
             {
                 if (data.Assignee == selectedResource.Name && (data.StartTime.Value.Date >= startDate.Value.Date && data.EndTime.Value.Date <= endDate.Value.Date))
                 {
                     data3.Add(data);
                 }
             }
-            TaskData.SprintData3 = data3;
+            SprintManagmentModel.SprintPlans[3] = data3;
         }
         else
         {
-            foreach (var data in TaskData.SprintData1)
+            foreach (var data in SprintManagmentModel.SprintPlans[1])
             {
                 if (data.StartTime.Value.Date >= startDate.Value.Date && data.EndTime.Value.Date <= endDate.Value.Date)
                 {
                     data1.Add(data);
                 }
             }
-            TaskData.SprintData1 = data1;
-            foreach (var data in TaskData.SprintData2)
+            SprintManagmentModel.SprintPlans[1] = data1;
+            foreach (var data in SprintManagmentModel.SprintPlans[2])
             {
                 if (data.StartTime.Value.Date >=startDate.Value.Date && data.EndTime.Value.Date <= endDate.Value.Date)
                 {
                     data2.Add(data);
                 }
             }
-            TaskData.SprintData2 = data2;
-            foreach (var data in TaskData.SprintData3)
+            SprintManagmentModel.SprintPlans[2] = data2;
+            foreach (var data in SprintManagmentModel.SprintPlans[3])
             {
                 if (data.StartTime.Value.Date >= startDate.Value.Date && data.EndTime.Value.Date <= endDate.Value.Date)
                 {
                     data3.Add(data);
                 }
             }
-            TaskData.SprintData3 = data3;
+            SprintManagmentModel.SprintPlans[3] = data3;
         }
     }
 

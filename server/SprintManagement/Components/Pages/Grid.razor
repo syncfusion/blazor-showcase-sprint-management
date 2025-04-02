@@ -9,26 +9,28 @@
     </GridGroupSettings>
     <GridEditSettings AllowAdding="true" AllowEditing="true" AllowDeleting="true" Mode="Syncfusion.Blazor.Grids.EditMode.Dialog"></GridEditSettings>
     <GridColumns>
-        <GridColumn Field=@nameof(TaskData.Id) IsPrimaryKey="true" HeaderText="ID" Visible="false" TextAlign="TextAlign.Center"></GridColumn>
-        <GridColumn Field=@nameof(TaskData.Subject) HeaderText="Subject" Width="230px" ClipMode="Syncfusion.Blazor.Grids.ClipMode.EllipsisWithTooltip" AllowGrouping="false"></GridColumn>
-        <GridColumn Field=@nameof(TaskData.StartTime) HeaderText="Start Date" Format="d" TextAlign="TextAlign.Center" Width="100px" AllowGrouping="false" EditType="EditType.DateTimePickerEdit"></GridColumn>
-        <GridColumn Field=@nameof(TaskData.EndTime) HeaderText="End Date" Format="d" TextAlign="TextAlign.Center" Width="100px" EditType="EditType.DateTimePickerEdit"></GridColumn>
-        <GridColumn Field=@nameof(TaskData.Priority) HeaderText="Priority" TextAlign="TextAlign.Center" Width="120px" EditType="EditType.DropDownEdit"></GridColumn>
-        <GridColumn Field=@nameof(TaskData.Progress) HeaderText="Progress" TextAlign="TextAlign.Center" Width="120px" EditType="EditType.NumericEdit"></GridColumn>
-        <GridColumn Field=@nameof(TaskData.Status) HeaderText="Status" TextAlign="TextAlign.Center" Width="120px" EditType="EditType.DropDownEdit"></GridColumn>
-        <GridColumn Field=@nameof(TaskData.Assignee) EditType="EditType.DropDownEdit" ></GridColumn>
+        <GridColumn Field=@nameof(SprintManagmentModel.TaskInfoModel.Id) IsPrimaryKey="true" HeaderText="ID" Visible="false" TextAlign="TextAlign.Center"></GridColumn>
+        <GridColumn Field=@nameof(SprintManagmentModel.TaskInfoModel.Subject) HeaderText="Subject" Width="230px" ClipMode="Syncfusion.Blazor.Grids.ClipMode.EllipsisWithTooltip" AllowGrouping="false"></GridColumn>
+        <GridColumn Field=@nameof(SprintManagmentModel.TaskInfoModel.StartTime) HeaderText="Start Date" Format="d" TextAlign="TextAlign.Center" Width="100px" AllowGrouping="false" EditType="EditType.DateTimePickerEdit"></GridColumn>
+        <GridColumn Field=@nameof(SprintManagmentModel.TaskInfoModel.EndTime) HeaderText="End Date" Format="d" TextAlign="TextAlign.Center" Width="100px" EditType="EditType.DateTimePickerEdit"></GridColumn>
+        <GridColumn Field=@nameof(SprintManagmentModel.TaskInfoModel.Priority) HeaderText="Priority" TextAlign="TextAlign.Center" Width="120px" EditType="EditType.DropDownEdit"></GridColumn>
+        <GridColumn Field=@nameof(SprintManagmentModel.TaskInfoModel.Progress) HeaderText="Progress" TextAlign="TextAlign.Center" Width="120px" EditType="EditType.NumericEdit"></GridColumn>
+        <GridColumn Field=@nameof(SprintManagmentModel.TaskInfoModel.Status) HeaderText="Status" TextAlign="TextAlign.Center" Width="120px" EditType="EditType.DropDownEdit"></GridColumn>
+        <GridColumn Field=@nameof(SprintManagmentModel.TaskInfoModel.Assignee) EditType="EditType.DropDownEdit" ></GridColumn>
     </GridColumns>
-    <GridEvents RowUpdating="RowUpdatingHandler" RowDeleted="RowDeletedHandler" RowUpdated="RowUpdatedHandler" TValue="TaskData"></GridEvents>
+    <GridEvents RowUpdating="RowUpdatingHandler" RowDeleted="RowDeletedHandler" RowUpdated="RowUpdatedHandler" TValue="SprintManagmentModel.TaskInfoModel"></GridEvents>
 </SfGrid>
 @code{
     public string[] GroupedColumns = new string[] { "Assignee" };
-    public SfGrid<TaskData> Grids;
+    public SfGrid<SprintManagmentModel.TaskInfoModel> Grids;
     [Parameter]
-    public List<TaskData> GridData { get; set; }
+    public List<SprintManagmentModel.TaskInfoModel> GridData { get; set; }
     [Parameter]
-    public EventCallback<List<TaskData>> onGridDataSourceChange { get; set; }
+    public List<SprintManagmentModel.AssignmentModel> AssignmentCollection { get; set; }
+    [Parameter]
+    public EventCallback<SprintManagmentModel.SprintModel> onGridDataSourceChange { get; set; }
 
-    public void RowUpdatingHandler(RowUpdatingEventArgs<TaskData> args)
+    public void RowUpdatingHandler(RowUpdatingEventArgs<SprintManagmentModel.TaskInfoModel> args)
     {
         if (args.Data != null)
         {
@@ -62,25 +64,31 @@
                     args.Data.ClassName = "e-davoliofuller";
                     break;
             }
-            foreach (var resource in TaskData.GetResources)
+            foreach (var resource in SprintManagmentModel.ResourcesCollection)
             {
                 if (resource.ResourceName == args.Data.Assignee)
                 {
-                    args.Data.Resources[0] = resource;
+                    SprintManagmentModel.AssignmentModel assignmentRecord = AssignmentCollection.FirstOrDefault(s => s.TaskId == args.Data.Id);
+                    if (assignmentRecord != null)
+                    {
+                        assignmentRecord.ResourceId = resource.ResourceId;
+                    }
                 }
             }
 
         }
 
     }
-    public void RowDeletedHandler(RowDeletedEventArgs<TaskData> args)
+    public void RowDeletedHandler(RowDeletedEventArgs<SprintManagmentModel.TaskInfoModel> args)
     {
         GridData.Remove(args.Datas[0]);
-        onGridDataSourceChange.InvokeAsync(GridData);
+        var projectCollection = new SprintManagmentModel.SprintModel { ProjectCollection = GridData, ResourceAssignmentCollection = AssignmentCollection };
+        onGridDataSourceChange.InvokeAsync(projectCollection);
     }
-    public void RowUpdatedHandler(RowUpdatedEventArgs<TaskData> args)
+    public void RowUpdatedHandler(RowUpdatedEventArgs<SprintManagmentModel.TaskInfoModel> args)
     {
-        onGridDataSourceChange.InvokeAsync(GridData);
+        var projectCollection = new SprintManagmentModel.SprintModel { ProjectCollection = GridData, ResourceAssignmentCollection = AssignmentCollection };
+        onGridDataSourceChange.InvokeAsync(projectCollection);
     }
 }
 <style>

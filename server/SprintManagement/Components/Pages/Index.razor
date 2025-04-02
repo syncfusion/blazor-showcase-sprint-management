@@ -8,12 +8,11 @@
     </div>
     <div class="sm-content-container">
         <div class="sm-header">
-            <Header onDataSourceChange="HandleDataSource" DataSource="@dataSource">
-
+            <Header onDataSourceChange="HandleDataSource" AssignmentCollection="@assignmentCollection" DataSource="@dataSource">
             </Header>
         </div>
         <div class="sm-body-content">
-            <Content currentPage="@currentPage" onContentDataSourceChanged="HandleDataSource" DataSource="@dataSource">
+            <Content currentPage="@currentPage" onContentDataSourceChanged="HandleDataSource" AssignmentCollection="@assignmentCollection" DataSource="@dataSource">
 
             </Content>
         </div>
@@ -27,78 +26,84 @@
 
 <style>
     .sm-sidebar-container {
-        width: 80px;
-        background-color: #0d9488;
-        position: relative;
-        height: 100vh;
+    width: 80px;
+    background-color: #0d9488;
+    position: relative;
+    height: 100vh;
     }
 
     .sm-content-container {
-        flex: 1;
-        padding: 20px;
-        box-sizing: border-box;
-        position: relative;
+    flex: 1;
+    padding: 20px;
+    box-sizing: border-box;
+    position: relative;
     }
 
     .sm-header {
-        background-color: white;
-        margin-bottom: 10px;
+    background-color: white;
+    margin-bottom: 10px;
     }
-    .sm-body-content{
-        border: 1px solid #cfd8dc;
+
+    .sm-body-content {
+    border: 1px solid #cfd8dc;
     }
+
     .main-container {
-        display: flex;
-        height: 100vh;
-        flex-direction: row;
-        position:absolute;
+    display: flex;
+    height: 100vh;
+    flex-direction: row;
+    position: absolute;
     }
+
     @@media (min-width: 800px) and (max-width: 855px) {
-        .sm-sidebar-container {
-            width: 65px;
-        }
+    .sm-sidebar-container {
+    width: 65px;
     }
+    }
+
     @@media (min-width: 700px) and (max-width: 800px) {
-        .sm-sidebar-container {
-            width: 50px;
-        }
+    .sm-sidebar-container {
+    width: 50px;
     }
+    }
+
     @@media only screen and (max-width: 700px) {
-        .sm-sidebar-container {
-            display: none;
-        }
+    .sm-sidebar-container {
+    display: none;
     }
-    @@media only screen and (max-width: 700px){
-        .mobile-nav-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 50px;
-            background-color: #0d9488;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 1000;
-        }
     }
-    @@media only screen and (min-width: 700px){
-        .mobile-nav-bar {
-            display: none;
-        }
+
+    @@media only screen and (max-width: 700px) {
+    .mobile-nav-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    background-color: #0d9488;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 1000;
     }
-    </style>
-    
+    }
+
+    @@media only screen and (min-width: 700px) {
+    .mobile-nav-bar {
+    display: none;
+    }
+    }
+</style>
+
 @code {
 
-    private string? currentPage { get; set; } 
-    private List<TaskData>? dataSource { get; set; }
+    private string? currentPage { get; set; }
+    private List<SprintManagmentModel.TaskInfoModel>? dataSource { get; set; }
+    private List<SprintManagmentModel.AssignmentModel>? assignmentCollection { get; set; }
     protected override void OnInitialized()
     {
-        TaskData.SprintData1 = TaskData.DataCollection1();
-        TaskData.SprintData2 = TaskData.DataCollection2();
-        TaskData.SprintData3 = TaskData.DataCollection3();
-        dataSource = TaskData.SprintData1;
+        dataSource = SprintManagmentModel.SprintPlans[1];
+        assignmentCollection = SprintManagmentModel.AssignmentCollections[1];
         currentPage = "Kanban";
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -112,8 +117,9 @@
     {
         currentPage = pageName;
     }
-    private void HandleDataSource(List<TaskData> DataSource)
+    private void HandleDataSource(SprintManagmentModel.SprintModel collections)
     {
-        dataSource = DataSource;
+        dataSource = collections.ProjectCollection;
+        assignmentCollection = collections.ResourceAssignmentCollection;
     }
 }
