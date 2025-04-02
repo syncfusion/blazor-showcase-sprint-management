@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Syncfusion.Blazor.Gantt;
+using System.ComponentModel.DataAnnotations;
 
 namespace Sprint_Management.Components.Data
 {
