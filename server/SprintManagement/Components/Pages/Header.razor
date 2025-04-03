@@ -369,13 +369,7 @@ else{
         {
             if (resource.ResourceName == data.Assignee)
             {
-                int maxId = SprintManagmentModel.assignmentRecordCount;
-                if(AssignmentCollection != null && AssignmentCollection.Any())
-                {
-                    maxId = Math.Max(SprintManagmentModel.assignmentRecordCount, AssignmentCollection.Max(s => s.PrimaryId));
-                }
-                AssignmentCollection.Add(new SprintManagmentModel.AssignmentModel() { PrimaryId = maxId + 1, TaskId = data.Id, ResourceId = resource.ResourceId });
-                SprintManagmentModel.assignmentRecordCount = maxId + 1;
+                AssignmentCollection.Add(new SprintManagmentModel.AssignmentModel() { PrimaryId = AssignmentCollection.Count + 1, TaskId = data.Id, ResourceId = resource.ResourceId });
             }
         }
         switch (ChangeValue)
@@ -503,17 +497,14 @@ else{
         switch (ChangeValue)
         {
             case "Project 1":
-                SprintManagmentModel.assignmentRecordCount = 24;
                 projectCollection = new SprintManagmentModel.SprintModel { ProjectCollection = SprintManagmentModel.SprintPlans[1], ResourceAssignmentCollection = SprintManagmentModel.AssignmentCollections[1] };
                 onDataSourceChange.InvokeAsync(projectCollection);
                 break;
             case "Project 2":
-                SprintManagmentModel.assignmentRecordCount = 20;
                 projectCollection = new SprintManagmentModel.SprintModel { ProjectCollection = SprintManagmentModel.SprintPlans[2], ResourceAssignmentCollection = SprintManagmentModel.AssignmentCollections[2] };
                 onDataSourceChange.InvokeAsync(projectCollection);
                 break;
             case "Project 3":
-                SprintManagmentModel.assignmentRecordCount = 10;
                 projectCollection = new SprintManagmentModel.SprintModel { ProjectCollection = SprintManagmentModel.SprintPlans[3], ResourceAssignmentCollection = SprintManagmentModel.AssignmentCollections[3] };
                 onDataSourceChange.InvokeAsync(projectCollection);
                 break;

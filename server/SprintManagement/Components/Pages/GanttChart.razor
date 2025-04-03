@@ -146,7 +146,7 @@
             }
 
             List<SprintManagmentModel.ResourceInfoModel> record = Gantt.GetResources<SprintManagmentModel.ResourceInfoModel>(args.Data);
-            if(record != null && record.Any())
+            if(record != null)
             {
                 args.Data.Assignee = record[0].ResourceName;
             }

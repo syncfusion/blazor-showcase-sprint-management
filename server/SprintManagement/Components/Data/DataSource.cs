@@ -5,9 +5,7 @@ namespace Sprint_Management.Components.Data
 {
     public class SprintManagmentModel
     {
-        public static int MaxId;
-
-        public static int assignmentRecordCount;
+        public static int MaxId = 0;
 
         public static Dictionary<int, List<TaskInfoModel>> SprintPlans = new Dictionary<int, List<TaskInfoModel>>()
         {
