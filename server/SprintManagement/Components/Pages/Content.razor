@@ -1,15 +1,8 @@
-﻿@if (currentPage == "Kanban")
+@if (currentPage == "Kanban")
 {
-    @if (isMobile)
-    {
-        <Kanban KanbanData="DataSource" AssignmentCollection=AssignmentCollection onKanbanDataSourceChange="HandleDataSourceChange">
-        </Kanban>
-    }
-    else
-    {
-        <Kanban KanbanData="DataSource" AssignmentCollection=AssignmentCollection onKanbanDataSourceChange="HandleDataSourceChange">
-        </Kanban>
-    }
+    <Kanban KanbanData="DataSource" AssignmentCollection=AssignmentCollection onKanbanDataSourceChange="HandleDataSourceChange">
+
+    </Kanban>
 }
 @if (currentPage == "Scheduler")
 {
@@ -41,25 +34,5 @@
     private void HandleDataSourceChange(SprintManagmentModel.SprintModel collection)
     {
         onContentDataSourceChanged.InvokeAsync(collection);
-    }
-    [Inject]
-    SyncfusionBlazorService? SyncfusionService { get; set; }
-    private bool isMobile = false;
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            string DeviceMode = await JSRuntime.InvokeAsync<string>("getDeviceMode");
-            if (DeviceMode == "mobile")
-            {
-                isMobile = true;
-                await SyncfusionBlazorService.SetIsDevice(true);
-            }
-            else
-            {
-                isMobile = false;
-            }
-            StateHasChanged();
-        }
     }
 }
