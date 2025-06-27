@@ -1,3 +1,5 @@
+[![.NET](https://github.com/syncfusion/blazor-showcase-sprint-management/actions/workflows/dotnet.yml/badge.svg)](https://github.com/syncfusion/blazor-showcase-sprint-management/actions/workflows/dotnet.yml)
+
 # Essential Studio for Blazor - Sprint Management
 
 Sprint management involves managing the sprint board of an organization. It allows teams to track tasks, allocate work, and monitor progress during a sprint.
