@@ -1,4 +1,4 @@
-@if (currentPage == "Kanban")
+﻿@if (currentPage == "Kanban")
 {
     <Kanban KanbanData="DataSource" AssignmentCollection=AssignmentCollection onKanbanDataSourceChange="HandleDataSourceChange">
 
@@ -28,7 +28,7 @@
     [Parameter]
     public List<SprintManagmentModel.TaskInfoModel>? DataSource { get ; set; }
     [Parameter]
-    public List<SprintManagmentModel.AssignmentModel> AssignmentCollection { get; set; }
+    public List<SprintManagmentModel.AssignmentModel>? AssignmentCollection { get; set; }
     [Parameter]
     public EventCallback<SprintManagmentModel.SprintModel> onContentDataSourceChanged { get; set; }
     private void HandleDataSourceChange(SprintManagmentModel.SprintModel collection)

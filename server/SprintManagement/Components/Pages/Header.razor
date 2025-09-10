@@ -1,9 +1,7 @@
 ﻿@* Top Container *@
 <div class="title-container">
     <div class="extra-circle"></div>
-    <div class="title">
-        Sprint Management
-    </div>
+    <h1 class="title">Sprint Management Board</h1>
     <button class="button" @onclick="AddRecord">+ New Task</button>
     <div class="custom-mobile-div" @onclick="AddRecord"></div>
     <div class="circle"></div>
@@ -178,7 +176,7 @@
 
 
 @* Card Container *@
-@if (DataSource.Any())
+@if (DataSource != null && DataSource.Any())
 {
     InprogressCount = TodoCount = TestingCount = DoneCount = 0;
     foreach (var data in DataSource)
@@ -292,16 +290,16 @@ else{
 
 
     // Code for the button component to add the record //
-    SfDropDownList<string, DropDownModel> StatusRef;
-    SfDropDownList<string, DropDownModel> AssigneeRef;
-    SfDropDownList<string, DropDownModel> PriorityRef;
-    SfTextBox SummaryRef;
-    SfDialog DialogRef;
+    SfDropDownList<string, DropDownModel>? StatusRef;
+    SfDropDownList<string, DropDownModel>? AssigneeRef;
+    SfDropDownList<string, DropDownModel>? PriorityRef;
+    SfTextBox? SummaryRef;
+    SfDialog? DialogRef;
     bool IsProgressChanged { get; set; } = false;
     bool IsStatusChanged { get; set; } = false;
-    SfNumericTextBox<int> ProgressRef;
-    SfDateTimePicker<DateTime?> StartTimeRef;
-    SfDateTimePicker<DateTime?> EndTimeRef;
+    SfNumericTextBox<int>? ProgressRef;
+    SfDateTimePicker<DateTime?>? StartTimeRef;
+    SfDateTimePicker<DateTime?>? EndTimeRef;
     private List<Syncfusion.Blazor.Kanban.ColumnModel> columnData = new List<Syncfusion.Blazor.Kanban.ColumnModel>()
     {
         new Syncfusion.Blazor.Kanban.ColumnModel(){ HeaderText= "To Do", KeyField= new List<string>() { "Open" } },
@@ -320,7 +318,7 @@ else{
     private class DropDownModel
     {
         public int Id { get; set; }
-        public string Value { get; set; }
+        public string? Value { get; set; }
     }
     private List<DropDownModel> StatusData = new List<DropDownModel>() {
         new DropDownModel { Id = 0, Value = "Open" },
@@ -369,19 +367,19 @@ else{
         {
             if (resource.ResourceName == data.Assignee)
             {
-                AssignmentCollection.Add(new SprintManagmentModel.AssignmentModel() { PrimaryId = AssignmentCollection.Count + 1, TaskId = data.Id, ResourceId = resource.ResourceId });
+                AssignmentCollection!.Add(new SprintManagmentModel.AssignmentModel() { PrimaryId = AssignmentCollection.Max(a => a.PrimaryId) + 1, TaskId = data.Id, ResourceId = resource.ResourceId });
             }
         }
-        switch (ChangeValue)
+        switch (SprintManagmentModel.ChangeValue)
         {
             case "Project 1":
-                PreviousData1.Add(data);
+                SprintManagmentModel.PreviousData[1].Add(data);
                 break;
             case "Project 2":
-                PreviousData2.Add(data);
+                SprintManagmentModel.PreviousData[2].Add(data);
                 break;
             case "Project 3":
-                PreviousData3.Add(data);
+                SprintManagmentModel.PreviousData[3].Add(data);
                 break;
         }
         UpdateFilterData(selectedResource,Start,End);
@@ -415,19 +413,16 @@ else{
 
     // Code for the DropDown component //
     [Parameter]
-    public List<SprintManagmentModel.TaskInfoModel> DataSource { get; set; } 
+    public List<SprintManagmentModel.TaskInfoModel>? DataSource { get; set; } 
     [Parameter]
     public List<SprintManagmentModel.AssignmentModel>? AssignmentCollection { get; set; }
     [Parameter]
     public EventCallback<SprintManagmentModel.SprintModel> onDataSourceChange { get; set; }
 
-    public List<SprintManagmentModel.TaskInfoModel> PreviousData1 { get; set; } = SprintManagmentModel.SprintPlans[1];
-    public List<SprintManagmentModel.TaskInfoModel> PreviousData2 { get; set; } = SprintManagmentModel.SprintPlans[2];
-    public List<SprintManagmentModel.TaskInfoModel> PreviousData3 { get; set; } = SprintManagmentModel.SprintPlans[3];
     public class DataFields
     {
-        public string ID { get; set; }
-        public string Text { get; set; }
+        public string? ID { get; set; }
+        public string? Text { get; set; }
     }
     private List<DataFields> Datas = new List<DataFields>()
     {
@@ -437,10 +432,9 @@ else{
 
      };
     public string DropDownValue { get; set; } = "DataSource1";
-    public string ChangeValue { get; set; } = "Project 1";
     public void OnChange(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string, DataFields> args)
     {
-        this.ChangeValue = args.ItemData.Text;
+        SprintManagmentModel.ChangeValue = args.ItemData!.Text!;
         UpdateDataSource();
     }
     //End of the Dropdown Component //
@@ -449,8 +443,8 @@ else{
     //Code for the Custom DropDown Component//
     public class Resource
     {
-        public string Name { get; set; }
-        public string ImageUrl { get; set; }
+        public string? Name { get; set; }
+        public string? ImageUrl { get; set; }
         public bool Selected { get; set; }
     }
     private Resource? selectedResource { get; set; } = null;
@@ -494,7 +488,7 @@ else{
     public void UpdateDataSource()
     {
         SprintManagmentModel.SprintModel projectCollection = new SprintManagmentModel.SprintModel();
-        switch (ChangeValue)
+        switch (SprintManagmentModel.ChangeValue)
         {
             case "Project 1":
                 projectCollection = new SprintManagmentModel.SprintModel { ProjectCollection = SprintManagmentModel.SprintPlans[1], ResourceAssignmentCollection = SprintManagmentModel.AssignmentCollections[1] };
@@ -515,9 +509,9 @@ else{
 
     public void UpdateFilterData(Resource? selectedResource , DateTime? startDate, DateTime? endDate)
     {
-        SprintManagmentModel.SprintPlans[1] = PreviousData1;
-        SprintManagmentModel.SprintPlans[2] = PreviousData2;
-        SprintManagmentModel.SprintPlans[3] = PreviousData3;
+        SprintManagmentModel.SprintPlans[1] = SprintManagmentModel.PreviousData[1];
+        SprintManagmentModel.SprintPlans[2] = SprintManagmentModel.PreviousData[2];
+        SprintManagmentModel.SprintPlans[3] = SprintManagmentModel.PreviousData[3];
         List<SprintManagmentModel.TaskInfoModel> data1 = new List<SprintManagmentModel.TaskInfoModel>();
         List<SprintManagmentModel.TaskInfoModel> data2 = new List<SprintManagmentModel.TaskInfoModel>();
         List<SprintManagmentModel.TaskInfoModel> data3 = new List<SprintManagmentModel.TaskInfoModel>();
@@ -525,7 +519,7 @@ else{
         {
             foreach (var data in SprintManagmentModel.SprintPlans[1])
             {
-                if (data.Assignee == selectedResource.Name && (data.StartTime.Value.Date >= startDate.Value.Date && data.EndTime.Value.Date <= endDate.Value.Date))
+                if (data.Assignee == selectedResource.Name && (data.StartTime!.Value.Date >= startDate!.Value.Date && data.EndTime!.Value.Date <= endDate!.Value.Date))
                 {
                     data1.Add(data);
                 }
@@ -533,7 +527,7 @@ else{
             SprintManagmentModel.SprintPlans[1] = data1;
             foreach (var data in SprintManagmentModel.SprintPlans[2])
             {
-                if (data.Assignee == selectedResource.Name && (data.StartTime.Value.Date >= startDate.Value.Date && data.EndTime.Value.Date <= endDate.Value.Date))
+                if (data.Assignee == selectedResource.Name && (data.StartTime!.Value.Date >= startDate!.Value.Date && data.EndTime!.Value.Date <= endDate!.Value.Date))
                 {
                     data2.Add(data);
                 }
@@ -541,7 +535,7 @@ else{
             SprintManagmentModel.SprintPlans[2] = data2;
             foreach (var data in SprintManagmentModel.SprintPlans[3])
             {
-                if (data.Assignee == selectedResource.Name && (data.StartTime.Value.Date >= startDate.Value.Date && data.EndTime.Value.Date <= endDate.Value.Date))
+                if (data.Assignee == selectedResource.Name && (data.StartTime!.Value.Date >= startDate!.Value.Date && data.EndTime!.Value.Date <= endDate!.Value.Date))
                 {
                     data3.Add(data);
                 }
@@ -552,7 +546,7 @@ else{
         {
             foreach (var data in SprintManagmentModel.SprintPlans[1])
             {
-                if (data.StartTime.Value.Date >= startDate.Value.Date && data.EndTime.Value.Date <= endDate.Value.Date)
+                if (data.StartTime!.Value.Date >= startDate!.Value.Date && data.EndTime!.Value.Date <= endDate!.Value.Date)
                 {
                     data1.Add(data);
                 }
@@ -560,7 +554,7 @@ else{
             SprintManagmentModel.SprintPlans[1] = data1;
             foreach (var data in SprintManagmentModel.SprintPlans[2])
             {
-                if (data.StartTime.Value.Date >=startDate.Value.Date && data.EndTime.Value.Date <= endDate.Value.Date)
+                if (data.StartTime!.Value.Date >= startDate!.Value.Date && data.EndTime!.Value.Date <= endDate!.Value.Date)
                 {
                     data2.Add(data);
                 }
@@ -568,7 +562,7 @@ else{
             SprintManagmentModel.SprintPlans[2] = data2;
             foreach (var data in SprintManagmentModel.SprintPlans[3])
             {
-                if (data.StartTime.Value.Date >= startDate.Value.Date && data.EndTime.Value.Date <= endDate.Value.Date)
+                if (data.StartTime!.Value.Date >= startDate!.Value.Date && data.EndTime!.Value.Date <= endDate!.Value.Date)
                 {
                     data3.Add(data);
                 }
@@ -576,13 +570,12 @@ else{
             SprintManagmentModel.SprintPlans[3] = data3;
         }
     }
-
     // End of the common method //
 }
 <style>
     .validation-tooltip {
-    position: relative;
-    top: 5px; /* Adjust as needed */
+        position: relative;
+        top: 5px; /* Adjust as needed */
     }
     /* Style for the Top Container*/
     .title-container{
@@ -591,7 +584,6 @@ else{
         justify-content: space-between;
         align-items: center;
     }
-
     @@media (min-width: 700px) and (max-width: 800px){
         .title-container {
             margin-bottom: 5px;

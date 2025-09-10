@@ -479,6 +479,18 @@
                 var deleteRecord = KanbanData.FirstOrDefault(s => s.Id == record.Id);
                 if(deleteRecord != null){
                     KanbanData.Remove(deleteRecord);
+                    switch (SprintManagmentModel.ChangeValue)
+                    {
+                        case "Project 1":
+                            SprintManagmentModel.PreviousData[1].Remove(deleteRecord);
+                            break;
+                        case "Project 2":
+                            SprintManagmentModel.PreviousData[2].Remove(deleteRecord);
+                            break;
+                        case "Project 3":
+                            SprintManagmentModel.PreviousData[3].Remove(deleteRecord);
+                            break;
+                    }
                 }
             }
         }

@@ -260,14 +260,25 @@
     }
     public void OnActionComplete(Syncfusion.Blazor.Schedule.ActionEventArgs<SprintManagmentModel.TaskInfoModel> args)
     {
-        if(args.DeletedRecords != null && args.DeletedRecords.Any())
+        if (args.DeletedRecords != null && args.DeletedRecords.Any())
         {
-            foreach (var record in args.DeletedRecords)
+            foreach (var deleteRecord in args.DeletedRecords)
             {
-                var deleteRecord = ScheduleData.FirstOrDefault(s => s.Id == record.Id);
                 if (deleteRecord != null)
                 {
                     ScheduleData.Remove(deleteRecord);
+                    switch (SprintManagmentModel.ChangeValue)
+                    {
+                        case "Project 1":
+                            SprintManagmentModel.PreviousData[1].Remove(SprintManagmentModel.PreviousData[1].FirstOrDefault(x => x.Id == deleteRecord.Id)!);
+                            break;
+                        case "Project 2":
+                            SprintManagmentModel.PreviousData[2].Remove(SprintManagmentModel.PreviousData[2].FirstOrDefault(x => x.Id == deleteRecord.Id)!);
+                            break;
+                        case "Project 3":
+                            SprintManagmentModel.PreviousData[3].Remove(SprintManagmentModel.PreviousData[3].FirstOrDefault(x => x.Id == deleteRecord.Id)!);
+                            break;
+                    }
                 }
             }
         }

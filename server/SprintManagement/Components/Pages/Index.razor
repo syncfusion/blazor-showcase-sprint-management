@@ -1,5 +1,5 @@
 ﻿@page "/"
-
+@implements IDisposable
 <div class="main-container">
     <div class="sm-sidebar-container">
         <SideBar onPageChange="HandlePageChange">
@@ -102,8 +102,29 @@
     private List<SprintManagmentModel.AssignmentModel>? assignmentCollection { get; set; }
     protected override void OnInitialized()
     {
+        SprintManagmentModel.SprintPlans = new Dictionary<int, List<SprintManagmentModel.TaskInfoModel>>()
+        {
+            { 1, SprintManagmentModel.ProjectCollection1() },
+            { 2, SprintManagmentModel.ProjectCollection2() },
+            { 3, SprintManagmentModel.ProjectCollection3() }
+        };
+
+        SprintManagmentModel.AssignmentCollections = new Dictionary<int, List<SprintManagmentModel.AssignmentModel>>()
+        {
+            { 1, SprintManagmentModel.ProjectAssignmentCollection1() },
+            { 2, SprintManagmentModel.ProjectAssignmentCollection2() },
+            { 3, SprintManagmentModel.ProjectAssignmentCollection3() }
+        };
+
+        SprintManagmentModel.PreviousData = new Dictionary<int, List<SprintManagmentModel.TaskInfoModel>>()
+        {
+            { 1, SprintManagmentModel.SprintPlans[1] },
+            { 2, SprintManagmentModel.SprintPlans[2] },
+            { 3, SprintManagmentModel.SprintPlans[3] }
+        };
         dataSource = SprintManagmentModel.SprintPlans[1];
         assignmentCollection = SprintManagmentModel.AssignmentCollections[1];
+        SprintManagmentModel.ChangeValue = "Project 1";
         currentPage = "Kanban";
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -121,5 +142,13 @@
     {
         dataSource = collections.ProjectCollection;
         assignmentCollection = collections.ResourceAssignmentCollection;
+    }
+    public void Dispose()
+    {
+        dataSource = null;
+        assignmentCollection = null;
+        SprintManagmentModel.SprintPlans = new Dictionary<int, List<SprintManagmentModel.TaskInfoModel>>();
+        SprintManagmentModel.AssignmentCollections = new Dictionary<int, List<SprintManagmentModel.AssignmentModel>>();
+        SprintManagmentModel.PreviousData = new Dictionary<int, List<SprintManagmentModel.TaskInfoModel>>();
     }
 }

@@ -19,9 +19,9 @@
         <TaskbarTemplate>
             @{
                 var task = context as SprintManagmentModel.TaskInfoModel;
-                var taskModel = GetTaskModelData(task);
+                var taskModel = GetTaskModelData(task!);
                 var progresswidth = taskModel.ProgressWidth;
-                switch (task.Status)
+                switch (task?.Status)
                 {
                     case "In Progress":
                         <div class="e-gantt-child-taskbar e-gantt-child-taskbar-inner-div" style="height:37px; background-color: rgba(222, 204, 251, 0.5);outline-color: rgb(201, 167, 244); border-radius:4px">
@@ -48,7 +48,7 @@
         </TaskbarTemplate>
     </GanttTemplates>
     <GanttEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true" AllowTaskbarEditing="true" Mode="Syncfusion.Blazor.Gantt.EditMode.Dialog"></GanttEditSettings>
-    <GanttEvents RowDeleting="RowDeletingHandler" RowUpdated="RowUpdatedHandler" TaskbarEdited="TaskbarEdited" QueryChartRowInfo="QueryChartRowInfoHandler" RowDataBound="RowDataBoundHandler" TValue="SprintManagmentModel.TaskInfoModel"></GanttEvents>
+    <GanttEvents RowUpdated="RowUpdatedHandler" TaskbarEdited="TaskbarEdited" QueryChartRowInfo="QueryChartRowInfoHandler" RowDataBound="RowDataBoundHandler" TValue="SprintManagmentModel.TaskInfoModel"></GanttEvents>
 </SfGantt>
 @code {
     public SfGantt<SprintManagmentModel.TaskInfoModel>? Gantt;
@@ -63,14 +63,7 @@
     private bool AdaptiveUI { get; set; } = false;
     private IGanttTaskModel<SprintManagmentModel.TaskInfoModel> GetTaskModelData(SprintManagmentModel.TaskInfoModel data)
     {
-        return Gantt.GetRowTaskModel(data);
-    }
-
-    public void RowDeletingHandler(RowDeletingEventArgs<SprintManagmentModel.TaskInfoModel> args)
-    {
-        args.Cancel = true;
-        var records = Gantt.GetSelectedRecordsAsync();
-        TaskCollection.Remove(records.Result[0]);
+        return Gantt!.GetRowTaskModel(data);
     }
     public void RowDataBoundHandler(RowDataBoundEventArgs<SprintManagmentModel.TaskInfoModel> args)
     {
@@ -145,32 +138,52 @@
                 args.Data.Status = "Open";
             }
 
-            List<SprintManagmentModel.ResourceInfoModel> record = Gantt.GetResources<SprintManagmentModel.ResourceInfoModel>(args.Data);
-            if(record != null)
+            List<SprintManagmentModel.ResourceInfoModel> record = Gantt!.GetResources<SprintManagmentModel.ResourceInfoModel>(args.Data);
+            if (record != null && record.Count > 0)
             {
                 args.Data.Assignee = record[0].ResourceName;
+                switch (args.Data.Assignee)
+                {
+                    case "Martin Tamer":
+                        args.Data.ClassName = "e-martintamer";
+                        break;
+                    case "Rose Fuller":
+                        args.Data.ClassName = "e-rosefuller";
+                        break;
+                    case "Margaret Buchanan":
+                        args.Data.ClassName = "e-margaretbuchanan";
+                        break;
+                    case "Fuller King":
+                        args.Data.ClassName = "e-fullerking";
+                        break;
+                    case "Davolio Fuller":
+                        args.Data.ClassName = "e-davoliofuller";
+                        break;
+                }
             }
-            switch (args.Data.Assignee)
+            else if (record != null && record.Count == 0)
             {
-                case "Martin Tamer":
-                    args.Data.ClassName = "e-martintamer";
-                    break;
-                case "Rose Fuller":
-                    args.Data.ClassName = "e-rosefuller";
-                    break;
-                case "Margaret Buchanan":
-                    args.Data.ClassName = "e-margaretbuchanan";
-                    break;
-                case "Fuller King":
-                    args.Data.ClassName = "e-fullerking";
-                    break;
-                case "Davolio Fuller":
-                    args.Data.ClassName = "e-davoliofuller";
-                    break;
+                var records = Gantt!.GetSelectedRecordsAsync();
+                if (records != null && records.Result.Count > 0)
+                {
+                    TaskCollection!.Remove(records.Result[0]);
+                    switch (SprintManagmentModel.ChangeValue)
+                    {
+                        case "Project 1":
+                            SprintManagmentModel.PreviousData[1].Remove(records.Result[0]);
+                            break;
+                        case "Project 2":
+                            SprintManagmentModel.PreviousData[2].Remove(records.Result[0]);
+                            break;
+                        case "Project 3":
+                            SprintManagmentModel.PreviousData[3].Remove(records.Result[0]);
+                            break;
+                    }
+                }
             }
+            var projectCollection = new SprintManagmentModel.SprintModel { ProjectCollection = TaskCollection, ResourceAssignmentCollection = AssignmentCollection };
+            onGanttDataSourceChange.InvokeAsync(projectCollection);
         }
-        var projectCollection = new SprintManagmentModel.SprintModel { ProjectCollection = TaskCollection, ResourceAssignmentCollection = AssignmentCollection };
-        onGanttDataSourceChange.InvokeAsync(projectCollection);
     }
 }
 <style>
@@ -188,7 +201,7 @@
         }
     }
 
-    .unassigned{
+    .unassigned {
         display:none !important;
     }
 </style>

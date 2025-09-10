@@ -1,30 +1,19 @@
-﻿using Syncfusion.Blazor.Gantt;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Sprint_Management.Components.Data
 {
     public class SprintManagmentModel
     {
         public static int MaxId = 0;
-
-        public static Dictionary<int, List<TaskInfoModel>> SprintPlans = new Dictionary<int, List<TaskInfoModel>>()
-        {
-            { 1, ProjectCollection1() },
-            { 2, ProjectCollection2() },
-            { 3, ProjectCollection3() }
-        };
-
-        public static Dictionary<int, List<AssignmentModel>> AssignmentCollections = new Dictionary<int, List<AssignmentModel>>()
-        {
-            { 1, ProjectAssignmentCollection1() },
-            { 2, ProjectAssignmentCollection2() },
-            { 3, ProjectAssignmentCollection3() }
-        };
+        public static string? ChangeValue { get; set; }
+        public static Dictionary<int, List<TaskInfoModel>> SprintPlans = new Dictionary<int, List<TaskInfoModel>>();
+        public static Dictionary<int, List<TaskInfoModel>> PreviousData = new Dictionary<int, List<TaskInfoModel>>();
+        public static Dictionary<int, List<AssignmentModel>> AssignmentCollections = new Dictionary<int, List<AssignmentModel>>();
 
         public class SprintModel
         {
-            public List<TaskInfoModel> ProjectCollection { get; set; }
-            public List<AssignmentModel> ResourceAssignmentCollection { get; set; }
+            public List<TaskInfoModel>? ProjectCollection { get; set; }
+            public List<AssignmentModel>? ResourceAssignmentCollection { get; set; }
         }
 
         public class TaskInfoModel
@@ -67,7 +56,7 @@ namespace Sprint_Management.Components.Data
             public int PrimaryId { get; set; }
             public int TaskId { get; set; }
             public int ResourceId { get; set; }
-            public double Unit { get; set; }
+            public double? Unit { get; set; }
         }
 
         public static List<ResourceInfoModel> ResourcesCollection = new List<ResourceInfoModel>()
@@ -89,8 +78,8 @@ namespace Sprint_Management.Components.Data
                 new AssignmentModel(){ PrimaryId=4, TaskId = 4 , ResourceId=1},
                 new AssignmentModel(){ PrimaryId=5, TaskId = 5 , ResourceId=2},
                 new AssignmentModel(){ PrimaryId=6, TaskId = 6 , ResourceId=2},
-                new AssignmentModel(){ PrimaryId=7, TaskId = 7, ResourceId=2},
-                new AssignmentModel(){ PrimaryId=8, TaskId = 8 , ResourceId=3},
+                new AssignmentModel(){ PrimaryId=7, TaskId = 7, ResourceId=3},
+                new AssignmentModel(){ PrimaryId=8, TaskId = 8 , ResourceId=4},
                 new AssignmentModel(){ PrimaryId=9, TaskId = 9, ResourceId=5},
                 new AssignmentModel(){ PrimaryId=10, TaskId = 10 , ResourceId=5},
                 new AssignmentModel(){ PrimaryId=11, TaskId = 11, ResourceId=1},
@@ -106,7 +95,8 @@ namespace Sprint_Management.Components.Data
                 new AssignmentModel(){ PrimaryId=21, TaskId = 21, ResourceId=5},
                 new AssignmentModel(){ PrimaryId=22, TaskId = 22, ResourceId=1},
                 new AssignmentModel(){ PrimaryId=23, TaskId = 23, ResourceId=2},
-                new AssignmentModel(){ PrimaryId=24, TaskId = 24, ResourceId=1}
+                new AssignmentModel(){ PrimaryId=24, TaskId = 24, ResourceId=2},
+                new AssignmentModel(){ PrimaryId=25, TaskId = 25, ResourceId=1},
             };
             return resourceAssignments;
         }
@@ -471,8 +461,8 @@ namespace Sprint_Management.Components.Data
                     Id = 24,
                     Subject = "Implement Two-Factor Authentication (2FA)",
                     Status= "Testing",
-                    StartTime= new DateTime( 2021,01,01 , 06,30,00,000,DateTimeKind.Utc),
-                    EndTime= new DateTime(2021,01,12, 08,30,00,000,DateTimeKind.Utc),
+                    StartTime= new DateTime( 2021,01,01,06,30,00,000,DateTimeKind.Utc),
+                    EndTime= new DateTime(2021,01,12,08,30,00,000,DateTimeKind.Utc),
                     Priority= "Normal",
                     Assignee ="Rose Fuller",
                     Tags= new List<string>{"Bug" },
