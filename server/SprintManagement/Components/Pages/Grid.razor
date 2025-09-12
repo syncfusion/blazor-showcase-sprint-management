@@ -1,9 +1,9 @@
-﻿<SfGrid @ref="Grids" DataSource="@GridData.ToList()" AllowGrouping="true" Toolbar="@(new List<Object>() { "Cancel", "Update" , "Delete", "Edit"})">
+﻿<SfGrid @ref="Grids" DataSource="@GridData!.ToList()" AllowGrouping="true" Toolbar="@(new List<Object>() { "Cancel", "Update" , "Delete", "Edit"})">
     <GridGroupSettings ShowDropArea="false" Columns="@GroupedColumns">
         <CaptionTemplate>
             @{
                 var data = (context as CaptionTemplateContext); 
-                <span>@data.Key</span>
+                <span>@data!.Key</span>
             }
         </CaptionTemplate>
     </GridGroupSettings>
@@ -22,11 +22,11 @@
 </SfGrid>
 @code{
     public string[] GroupedColumns = new string[] { "Assignee" };
-    public SfGrid<SprintManagmentModel.TaskInfoModel> Grids;
+    public SfGrid<SprintManagmentModel.TaskInfoModel>? Grids;
     [Parameter]
-    public List<SprintManagmentModel.TaskInfoModel> GridData { get; set; }
+    public List<SprintManagmentModel.TaskInfoModel>? GridData { get; set; }
     [Parameter]
-    public List<SprintManagmentModel.AssignmentModel> AssignmentCollection { get; set; }
+    public List<SprintManagmentModel.AssignmentModel>? AssignmentCollection { get; set; }
     [Parameter]
     public EventCallback<SprintManagmentModel.SprintModel> onGridDataSourceChange { get; set; }
 
@@ -68,7 +68,7 @@
             {
                 if (resource.ResourceName == args.Data.Assignee)
                 {
-                    SprintManagmentModel.AssignmentModel assignmentRecord = AssignmentCollection.FirstOrDefault(s => s.TaskId == args.Data.Id);
+                    SprintManagmentModel.AssignmentModel assignmentRecord = AssignmentCollection!.FirstOrDefault(s => s.TaskId == args.Data.Id);
                     if (assignmentRecord != null)
                     {
                         assignmentRecord.ResourceId = resource.ResourceId;
@@ -81,7 +81,19 @@
     }
     public void RowDeletedHandler(RowDeletedEventArgs<SprintManagmentModel.TaskInfoModel> args)
     {
-        GridData.Remove(args.Datas[0]);
+        GridData!.Remove(args.Datas[0]);
+        switch (SprintManagmentModel.ChangeValue)
+        {
+            case "Project 1":
+                SprintManagmentModel.PreviousData[1].Remove(args.Datas[0]);
+                break;
+            case "Project 2":
+                SprintManagmentModel.PreviousData[2].Remove(args.Datas[0]);
+                break;
+            case "Project 3":
+                SprintManagmentModel.PreviousData[3].Remove(args.Datas[0]);
+                break;
+        }
         var projectCollection = new SprintManagmentModel.SprintModel { ProjectCollection = GridData, ResourceAssignmentCollection = AssignmentCollection };
         onGridDataSourceChange.InvokeAsync(projectCollection);
     }

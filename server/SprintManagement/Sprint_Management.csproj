@@ -5,15 +5,16 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
+
   <ItemGroup>
-	<PackageReference Include="Syncfusion.Blazor.Core" Version="*" />
-	<PackageReference Include="Syncfusion.Blazor.DataForm" Version="*" />
-	<PackageReference Include="Syncfusion.Blazor.Gantt" Version="*" />
-	<PackageReference Include="Syncfusion.Blazor.Inputs" Version="*" />
-	<PackageReference Include="Syncfusion.Blazor.Kanban" Version="*" />
-	<PackageReference Include="Syncfusion.Blazor.Schedule" Version="*" />
-	<PackageReference Include="Syncfusion.Blazor.Layouts" Version="*" />
-	<PackageReference Include="Syncfusion.Blazor.Themes" Version="*" />
+	<PackageReference Include="Syncfusion.Blazor.Core" Version="31.1.17" />
+	<PackageReference Include="Syncfusion.Blazor.DataForm" Version="31.1.17" />
+	<PackageReference Include="Syncfusion.Blazor.Gantt" Version="31.1.17" />
+	<PackageReference Include="Syncfusion.Blazor.Inputs" Version="31.1.17" />
+	<PackageReference Include="Syncfusion.Blazor.Kanban" Version="31.1.17" />
+	<PackageReference Include="Syncfusion.Blazor.Schedule" Version="31.1.17" />
+	<PackageReference Include="Syncfusion.Blazor.Layouts" Version="31.1.17" />
+	<PackageReference Include="Syncfusion.Blazor.Themes" Version="31.1.17" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="wwwroot\Script\" />
