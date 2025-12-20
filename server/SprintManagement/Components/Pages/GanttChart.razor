@@ -160,6 +160,8 @@
                         args.Data.ClassName = "e-davoliofuller";
                         break;
                 }
+                var projectCollection = new SprintManagmentModel.SprintModel { ProjectCollection = TaskCollection, ResourceAssignmentCollection = AssignmentCollection };
+                onGanttDataSourceChange.InvokeAsync(projectCollection);
             }
             else if (record != null && record.Count == 0)
             {
@@ -181,8 +183,6 @@
                     }
                 }
             }
-            var projectCollection = new SprintManagmentModel.SprintModel { ProjectCollection = TaskCollection, ResourceAssignmentCollection = AssignmentCollection };
-            onGanttDataSourceChange.InvokeAsync(projectCollection);
         }
     }
 }
