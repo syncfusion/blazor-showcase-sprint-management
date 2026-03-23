@@ -8,14 +8,14 @@ Sprint management involves managing the sprint board of an organization. It allo
 
 The samples requires the below requirements to run.
 
-* [Visual Studio 2022](https://visualstudio.microsoft.com/vs/)
-* [.NET 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+* [Visual Studio 2026](https://visualstudio.microsoft.com/downloads/#visual-studio-professional-2026)
+* [.NET 10.0](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
 
 ## Requirements to run the demo
 
 * [System requirements](https://blazor.syncfusion.com/documentation/system-requirements/)
 
-* [NET 8 WebAssembly Workload](https://learn.microsoft.com/en-us/aspnet/core/blazor/webassembly-build-tools-and-aot?view=aspnetcore-8.0#net-webassembly-build-tools)
+* [NET 10 WebAssembly Workload](https://learn.microsoft.com/en-us/aspnet/core/blazor/webassembly-build-tools-and-aot?view=aspnetcore-10.0#net-webassembly-build-tools)
 
 ## How to run the demo
 
@@ -27,7 +27,7 @@ Clone the repository.This repository contains Blazor Sprint Management Server ap
 * Open the command prompt from the demo's directory.
 * Run the demo using the following command.
    
-   To run .NET 8 Sprint Management Server project
+   To run .NET 10 Sprint Management Server project
    > `dotnet run --project webapp/server/Sprint_Management.csproj`
 
 ### Run the demo using Visual Studio

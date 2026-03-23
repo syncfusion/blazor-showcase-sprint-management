@@ -38,11 +38,13 @@
             events.forEach(event => document.addEventListener(event, loadGTM, { once: true }));
         });
     </script>
-    <link rel="stylesheet" href="bootstrap/bootstrap.min.css" />
-    <link rel="stylesheet" href="Sprint_Management.styles.css" />
-    <link rel="stylesheet" href="app.css" />
+    <ResourcePreloader />
+    <link rel="stylesheet" href="@Assets["bootstrap/bootstrap.min.css"]" />
+    <link rel="stylesheet" href="@Assets["Sprint_Management.styles.css"]" />
+    <ImportMap />
+    <link rel="stylesheet" href="@Assets["app.css"]" />
     <link rel="icon" type="image/png" href="favicon.ico" />
-    <link href="_content/Syncfusion.Blazor.Themes/bootstrap5.css" rel="stylesheet" />
+    <link href="_content/Syncfusion.Blazor.Themes/fluent2.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
     <HeadOutlet @rendermode="InteractiveServer" />
 </head>
@@ -59,13 +61,10 @@
         <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W8WD8WN" height="0" width="0" style="display:none;visibility:hidden"></iframe>
     </noscript>
     <!-- End Google Tag Manager (noscript) -->
-@{#if Release}
-    <script src="Script/showcasescript.min.js"></script>
-@{#else}
-    <script src="Script/showcasescript.js"></script>
-@{#endif}
-    <script src="_content/Syncfusion.Blazor.Core/scripts/syncfusion-blazor.min.js" type="text/javascript"></script>
-    <script src="_framework/blazor.web.js"></script>
+    <script src="@Assets["Script/showcasescript.js"]"></script>
+    <script src="@Assets["_content/Syncfusion.Blazor.Core/scripts/syncfusion-blazor.min.js"]" type="text/javascript"></script>
+    <script src="@Assets["_framework/blazor.web.js"]"></script>
+    
 </body>
 
 </html>
