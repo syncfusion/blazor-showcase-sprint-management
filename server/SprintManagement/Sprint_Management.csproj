@@ -1,20 +1,25 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
   </PropertyGroup>
+  
+	<PropertyGroup Condition="'$(Configuration)'=='Release'">
+		<DefineConstants>Release</DefineConstants>
+	</PropertyGroup>
 
   <ItemGroup>
-	<PackageReference Include="Syncfusion.Blazor.Core" Version="32.1.19" />
-	<PackageReference Include="Syncfusion.Blazor.DataForm" Version="32.1.19" />
-	<PackageReference Include="Syncfusion.Blazor.Gantt" Version="32.1.19" />
-	<PackageReference Include="Syncfusion.Blazor.Inputs" Version="32.1.19" />
-	<PackageReference Include="Syncfusion.Blazor.Kanban" Version="32.1.19" />
-	<PackageReference Include="Syncfusion.Blazor.Schedule" Version="32.1.19" />
-	<PackageReference Include="Syncfusion.Blazor.Layouts" Version="32.1.19" />
-	<PackageReference Include="Syncfusion.Blazor.Themes" Version="32.1.19" />
+	<PackageReference Include="Syncfusion.Blazor.Core" Version="33.1.44" />
+	<PackageReference Include="Syncfusion.Blazor.DataForm" Version="33.1.44" />
+	<PackageReference Include="Syncfusion.Blazor.Gantt" Version="33.1.44" />
+	<PackageReference Include="Syncfusion.Blazor.Inputs" Version="33.1.44" />
+	<PackageReference Include="Syncfusion.Blazor.Kanban" Version="33.1.44" />
+	<PackageReference Include="Syncfusion.Blazor.Schedule" Version="33.1.44" />
+	<PackageReference Include="Syncfusion.Blazor.Layouts" Version="33.1.44" />
+	<PackageReference Include="Syncfusion.Blazor.Themes" Version="33.1.44" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="wwwroot\Script\" />
