@@ -12,14 +12,14 @@
 	</PropertyGroup>
 
   <ItemGroup>
-	<PackageReference Include="Syncfusion.Blazor.Core" Version="33.1.44" />
-	<PackageReference Include="Syncfusion.Blazor.DataForm" Version="33.1.44" />
-	<PackageReference Include="Syncfusion.Blazor.Gantt" Version="33.1.44" />
-	<PackageReference Include="Syncfusion.Blazor.Inputs" Version="33.1.44" />
-	<PackageReference Include="Syncfusion.Blazor.Kanban" Version="33.1.44" />
-	<PackageReference Include="Syncfusion.Blazor.Schedule" Version="33.1.44" />
-	<PackageReference Include="Syncfusion.Blazor.Layouts" Version="33.1.44" />
-	<PackageReference Include="Syncfusion.Blazor.Themes" Version="33.1.44" />
+	<PackageReference Include="Syncfusion.Blazor.Core" Version="34.1.29" />
+	<PackageReference Include="Syncfusion.Blazor.DataForm" Version="34.1.29" />
+	<PackageReference Include="Syncfusion.Blazor.Gantt" Version="34.1.29" />
+	<PackageReference Include="Syncfusion.Blazor.Inputs" Version="34.1.29" />
+	<PackageReference Include="Syncfusion.Blazor.Kanban" Version="34.1.29" />
+	<PackageReference Include="Syncfusion.Blazor.Schedule" Version="34.1.29" />
+	<PackageReference Include="Syncfusion.Blazor.Layouts" Version="34.1.29" />
+	<PackageReference Include="Syncfusion.Blazor.Themes" Version="34.1.29" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="wwwroot\Script\" />
